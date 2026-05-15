@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐧 Cánh Cụt & Gà Nhỏ 🐥</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F3EBD8;
+      --bg2: #EDE0C8;
+      --card: #FDFAF3;
+      --text: #1C0F06;
+      --muted: #7A5C42;
+      --accent: #B8633A;
+      --accent2: #D4956A;
+      --border: #DFD0B8;
+      --white: #FFFDF8;
+      --shadow: rgba(28,15,6,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1000; opacity: 0.5;
+    }
+
+    header {
+      text-align: center;
+      padding: 60px 24px 40px;
+      position: relative;
+    }
+    .header-line {
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      margin-bottom: 8px;
+    }
+    .header-line::before, .header-line::after {
+      content: '';
+      height: 1px; width: 80px;
+      background: linear-gradient(90deg, transparent, var(--accent));
+    }
+    .header-line::after {
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+    .header-emoji { font-size: 1.4rem; }
+
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+    .subtitle {
+      margin-top: 10px;
+      font-size: 1.05rem;
+      color: var(--muted);
+      font-style: italic;
+      letter-spacing: 0.05em;
+    }
+    .photo-count {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 40px; margin-bottom: 32px;
+    }
+    .divider::before, .divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .divider span { color: var(--accent); font-size: 1rem; }
+
+    .gallery-wrap { padding: 0 20px 120px; max-width: 1400px; margin: 0 auto; }
+
+    .gallery { columns: 4; column-gap: 14px; }
+    @media (max-width: 1100px) { .gallery { columns: 3; } }
+    @media (max-width: 700px)  { .gallery { columns: 2; column-gap: 10px; } }
+    @media (max-width: 420px)  { .gallery { columns: 1; } }
+
+    .photo-card {
+      break-inside: avoid;
+      margin-bottom: 14px;
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--card);
+      box-shadow: 0 2px 12px var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeUp 0.5s ease both;
+    }
+    .photo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px var(--shadow);
+    }
+    .photo-card img {
+      width: 100%; display: block;
+      transition: filter 0.3s ease;
+    }
+    .photo-card:hover img { filter: brightness(0.88); }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(28,15,6,0.7) 0%, transparent 55%);
+      opacity: 0; transition: opacity 0.3s ease;
+      display: flex; align-items: flex-end; padding: 14px;
+    }
+    .photo-card:hover .card-overlay { opacity: 1; }
+    .card-caption {
+      color: #fff;
+      font-size: 0.9rem;
+      font-style: italic;
+      line-height: 1.4;
+    }
+    .card-date {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.65);
+      margin-top: 2px;
+      font-style: normal;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-delete {
+      position: absolute; top: 8px; right: 8px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(28,15,6,0.6); border: none;
+      color: white; font-size: 0.75rem; cursor: pointer;
+      opacity: 0; transition: opacity 0.2s; display: flex;
+      align-items: center; justify-content: center;
+      z-index: 10;
+    }
+    .photo-card:hover .btn-delete { opacity: 1; }
+    .btn-delete:hover { background: #c0392b; }
+
+    .empty {
+      text-align: center; padding: 80px 20px;
+      color: var(--muted);
+    }
+    .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+    .empty h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 400; margin-bottom: 8px;
+      color: var(--text);
+    }
+    .empty p { font-style: italic; }
+
+    .loading { text-align: center; padding: 80px 20px; color: var(--muted); }
+    .spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .fab {
+      position: fixed; bottom: 32px; right: 32px;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      border: none; cursor: pointer;
+      font-size: 1.6rem;
+      box-shadow: 0 6px 24px rgba(184,99,58,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fab:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(184,99,58,0.6); }
+    .fab:active { transform: scale(0.95); }
+
+    .modal-bg {
+      position: fixed; inset: 0;
+      background: rgba(28,15,6,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-bg.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 36px;
+      width: 100%; max-width: 440px;
+      box-shadow: 0 24px 60px rgba(28,15,6,0.25);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    .modal-bg.open .modal { transform: translateY(0); }
+
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 400;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .modal .modal-sub {
+      font-style: italic; color: var(--muted);
+      font-size: 0.95rem; margin-bottom: 24px;
+    }
+
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block; font-size: 0.8rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .field input, .field textarea {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px; background: var(--bg);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: var(--text);
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+    .field input:focus, .field textarea:focus {
+      outline: none; border-color: var(--accent);
+    }
+
+    .dropzone {
+      border: 2px dashed var(--border);
+      border-radius: 8px; padding: 28px 20px;
+      text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      color: var(--muted); font-style: italic;
+      background: var(--bg);
+      position: relative;
+    }
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--accent); background: #FAF3E4;
+    }
+    .dropzone .dz-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+    .dropzone input {
+      position: absolute; opacity: 0; pointer-events: none;
+      width: 1px; height: 1px;
+    }
+    .preview-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+      margin-top: 12px;
+    }
+    .preview-grid img {
+      width: 100%; aspect-ratio: 1/1; object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .progress-bar-wrap {
+      height: 4px; background: var(--border); border-radius: 4px;
+      margin: 12px 0; overflow: hidden; display: none;
+    }
+    .progress-bar {
+      height: 100%; background: var(--accent);
+      border-radius: 4px; transition: width 0.3s;
+      width: 0%;
+    }
+    .progress-text {
+      text-align: center; font-size: 0.85rem;
+      color: var(--muted); font-style: italic;
+      margin-bottom: 12px; display: none;
+    }
+
+    .error-msg {
+      color: #c0392b; font-size: 0.9rem;
+      text-align: center; margin-bottom: 12px;
+      font-style: italic; display: none;
+    }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+    .btn {
+      flex: 1; padding: 12px;
+      border-radius: 6px; border: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: #9f5230; }
+    .btn-primary:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+    .btn-secondary { background: var(--bg); color: var(--muted); border: 1.5px solid var(--border); }
+    .btn-secondary:hover { background: var(--bg2); }
+
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.2rem; color: var(--muted);
+      width: 28px; height: 28px; display: flex;
+      align-items: center; justify-content: center;
+      border-radius: 50%; transition: background 0.2s;
+    }
+    .modal-close:hover { background: var(--bg2); }
+
+    /* Delete confirm modal */
+    .delete-modal .modal { max-width: 360px; text-align: center; }
+    .delete-modal .modal h2 { font-size: 1.3rem; margin-bottom: 10px; }
+    .delete-modal .modal p { color: var(--muted); font-style: italic; margin-bottom: 20px; }
+
+    .lightbox-bg {
+      position: fixed; inset: 0;
+      background: rgba(10,5,2,0.92);
+      backdrop-filter: blur(6px);
+      z-index: 300;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .lightbox-bg.open { opacity: 1; pointer-events: all; }
+
+    .lightbox {
+      max-width: 90vw; max-height: 90vh;
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .lightbox img {
+      max-width: 90vw; max-height: 80vh;
+      object-fit: contain; border-radius: 4px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .lightbox-caption {
+      color: rgba(255,255,255,0.85);
+      font-style: italic; font-size: 1.05rem;
+      margin-top: 16px; text-align: center;
+      max-width: 600px;
+    }
+    .lightbox-date {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.8rem; margin-top: 4px;
+      letter-spacing: 0.08em;
+    }
+    .lb-close {
+      position: fixed; top: 20px; right: 24px;
+      background: none; border: none; color: rgba(255,255,255,0.7);
+      font-size: 1.8rem; cursor: pointer; transition: color 0.2s;
+    }
+    .lb-close:hover { color: white; }
+    .lb-nav {
+      position: fixed;
+      top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.12);
+      border: none; color: white; font-size: 1.4rem;
+      width: 44px; height: 44px; border-radius: 50%;
+      cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lb-nav:hover { background: rgba(255,255,255,0.25); }
+    .lb-prev { left: 16px; }
+    .lb-next { right: 16px; }
+
+    .toast {
+      position: fixed; bottom: 110px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text); color: var(--white);
+      padding: 12px 24px; border-radius: 40px;
+      font-size: 0.9rem; z-index: 500;
+      opacity: 0; transition: all 0.3s;
+      pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #c0392b; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-line">
+    <span class="header-emoji">🐧</span>
+    <span class="header-emoji">🐥</span>
+  </div>
+  <h1>Cánh Cụt <em>&</em> Gà Nhỏ</h1>
+  <p class="subtitle">những khoảnh khắc nhỏ xinh của chúng mình 🤍</p>
+  <p class="photo-count" id="photoCount"></p>
+</header>
+
+<div class="divider"><span>✦</span></div>
+
+<div class="gallery-wrap">
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Đang tải ảnh lên nào...</p>
+  </div>
+  <div id="emptyState" class="empty" style="display:none">
+    <div class="empty-icon">📷</div>
+    <h2>Chưa có ảnh nào cả</h2>
+    <p>Nhấn nút 🐧 bên dưới để đăng ảnh đầu tiên nhé!</p>
+  </div>
+  <div class="gallery" id="gallery"></div>
+</div>
+
+<button class="fab" id="fabBtn" title="Đăng ảnh mới">🐧</button>
+
+<!-- Upload Modal -->
+<div class="modal-bg" id="uploadModal">
+  <div class="modal">
+    <button class="modal-close" id="closeUpload">✕</button>
+    <h2>Đăng ảnh mới 📸</h2>
+    <p class="modal-sub">chỉ hai đứa mình thôi nhé~</p>
+
+    <div class="field">
+      <label>Chọn ảnh</label>
+      <div class="dropzone" id="dropzone">
+        <span class="dz-icon">🖼️</span>
+        <span id="dzText">Nhấn để chọn hoặc kéo thả ảnh vào đây</span>
+        <div class="preview-grid" id="previewGrid"></div>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Caption (không bắt buộc)</label>
+      <textarea id="captionInput" rows="2" placeholder="Hôm nay hai đứa mình..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Mật khẩu 🔒</label>
+      <input type="password" id="passwordInput" placeholder="Nhập mật khẩu để đăng ảnh">
+    </div>
+
+    <div class="progress-bar-wrap" id="progressWrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText"></div>
+    <div class="error-msg" id="uploadError"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelUpload">Thôi</button>
+      <button class="btn btn-primary" id="doUpload">Đăng lên 💌</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-bg delete-modal" id="deleteModal">
+  <div class="modal">
+    <h2>Xóa ảnh này? 🥺</h2>
+    <p>Sau khi xóa thì không lấy lại được đâu nha...</p>
+    <div class="field">
+      <label>Mật khẩu 🔒</label>
+      <input type="password" id="deletePasswordInput" placeholder="Nhập mật khẩu để xóa">
+    </div>
+    <div class="error-msg" id="deleteError"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelDelete">Thôi</button>
+      <button class="btn btn-primary" id="confirmDelete" style="background:#c0392b">Xóa đi 🗑️</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox-bg" id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-nav lb-prev" id="lbPrev">‹</button>
+  <button class="lb-nav lb-next" id="lbNext">›</button>
+  <div class="lightbox">
+    <img id="lbImg" src="" alt="">
+    <div class="lightbox-caption" id="lbCaption"></div>
+    <div class="lightbox-date" id="lbDate"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // =============================================
+  // ⚙️  CẤU HÌNH — thay đổi các giá trị này
+  // =============================================
+  const CLOUD_NAME   = "dzuzeuzmv";       // Cloudinary cloud name
+  const UPLOAD_PRESET = "album_upload";   // Unsigned upload preset
+  const FOLDER       = "album";           // Cloudinary folder
+  // =============================================
+
+  let photos = [];
+  let lbIndex = 0;
+  let pendingDeleteId = null; // public_id của ảnh cần xóa
+
+  // DOM refs
+  const gallery      = document.getElementById("gallery");
+  const loading      = document.getElementById("loading");
+  const emptyState   = document.getElementById("emptyState");
+  const photoCount   = document.getElementById("photoCount");
+  const fabBtn       = document.getElementById("fabBtn");
+  const uploadModal  = document.getElementById("uploadModal");
+  const deleteModal  = document.getElementById("deleteModal");
+  const dropzone     = document.getElementById("dropzone");
+  const fileInput    = document.getElementById("fileInput");
+  const previewGrid  = document.getElementById("previewGrid");
+  const dzText       = document.getElementById("dzText");
+  const captionInput = document.getElementById("captionInput");
+  const passwordInput = document.getElementById("passwordInput");
+  const doUploadBtn  = document.getElementById("doUpload");
+  const progressWrap = document.getElementById("progressWrap");
+  const progressBar  = document.getElementById("progressBar");
+  const progressText = document.getElementById("progressText");
+  const uploadError  = document.getElementById("uploadError");
+  const lightbox     = document.getElementById("lightbox");
+  const lbImg        = document.getElementById("lbImg");
+  const lbCaption    = document.getElementById("lbCaption");
+  const lbDate       = document.getElementById("lbDate");
+  const lbClose      = document.getElementById("lbClose");
+  const lbPrev       = document.getElementById("lbPrev");
+  const lbNext       = document.getElementById("lbNext");
+  const toast        = document.getElementById("toast");
+  const deleteError  = document.getElementById("deleteError");
+  const deletePassInput = document.getElementById("deletePasswordInput");
+
+  let selectedFiles = [];
+
+  // ─── LOAD PHOTOS ───────────────────────────────
+  async function loadPhotos() {
+    loading.style.display = "block";
+    gallery.innerHTML = "";
+    try {
+      // Cloudinary "list by tag" endpoint — cần bật "Resource list" trong Settings > Security
+      const res = await fetch(
+        `https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER}.json`
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      photos = (data.resources || []).sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      renderGallery();
+    } catch(err) {
+      console.error("loadPhotos error:", err);
+      showToast("Không tải được ảnh — kiểm tra Cloudinary Settings > Security > Resource list", true);
+    } finally {
+      loading.style.display = "none";
+    }
+  }
+
+  // ─── RENDER GALLERY ────────────────────────────
+  function renderGallery() {
+    gallery.innerHTML = "";
+    photoCount.textContent = `${photos.length} KHOẢNH KHẮC`;
+
+    if (photos.length === 0) {
+      emptyState.style.display = "block";
+      return;
+    }
+    emptyState.style.display = "none";
+
+    photos.forEach((photo, index) => {
+      const card = document.createElement("div");
+      card.className = "photo-card";
+
+      const caption = photo.context?.custom?.caption || "✨";
+      const date = new Date(photo.created_at).toLocaleDateString("vi-VN");
+
+      card.innerHTML = `
+        <img src="${photo.secure_url}" loading="lazy" alt="${caption}">
+        <div class="card-overlay">
+          <div>
+            <div class="card-caption">${caption}</div>
+            <div class="card-date">${date}</div>
+          </div>
+        </div>
+        <button class="btn-delete" title="Xóa ảnh">✕</button>
+      `;
+
+      // Click ảnh → lightbox
+      card.querySelector("img").addEventListener("click", () => openLightbox(index));
+      card.querySelector(".card-overlay").addEventListener("click", () => openLightbox(index));
+
+      // Click nút xóa
+      card.querySelector(".btn-delete").addEventListener("click", (e) => {
+        e.stopPropagation();
+        openDeleteModal(photo.public_id);
+      });
+
+      gallery.appendChild(card);
+    });
+  }
+
+  // ─── UPLOAD MODAL ──────────────────────────────
+  fabBtn.onclick = () => uploadModal.classList.add("open");
+  document.getElementById("cancelUpload").onclick = closeUploadModal;
+  document.getElementById("closeUpload").onclick  = closeUploadModal;
+
+  function closeUploadModal() {
+    uploadModal.classList.remove("open");
+    selectedFiles = [];
+    fileInput.value = "";
+    previewGrid.innerHTML = "";
+    captionInput.value = "";
+    passwordInput.value = "";
+    uploadError.style.display = "none";
+    progressWrap.style.display = "none";
+    progressText.style.display = "none";
+    dzText.textContent = "Nhấn để chọn hoặc kéo thả ảnh vào đây";
+  }
+
+  // Dropzone
+  dropzone.addEventListener("click", (e) => {
+    if (e.target === fileInput) return;
+    fileInput.click();
+  });
+  dropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropzone.classList.add("dragover");
+  });
+  dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+    handleFiles([...e.dataTransfer.files]);
+  });
+  fileInput.addEventListener("change", (e) => {
+    handleFiles([...e.target.files]);
+  });
+
+  function handleFiles(files) {
+    selectedFiles = files.filter(f => f.type.startsWith("image/"));
+    previewGrid.innerHTML = "";
+    if (selectedFiles.length === 0) return;
+    dzText.textContent = `Đã chọn ${selectedFiles.length} ảnh`;
+    selectedFiles.forEach(file => {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      previewGrid.appendChild(img);
+    });
+  }
+
+  // ─── DO UPLOAD ─────────────────────────────────
+  doUploadBtn.onclick = async () => {
+    if (selectedFiles.length === 0) {
+      showUploadError("Chưa chọn ảnh nào 🥺");
+      return;
+    }
+
+    // NOTE: password dùng để check qua Netlify Function (nếu bạn muốn bảo vệ upload)
+    // Hiện tại upload thẳng lên Cloudinary bằng unsigned preset — không cần mật khẩu phía client
+    // Nếu muốn bảo vệ upload, hãy tạo thêm Netlify Function tương tự delete-photo.js
+
+    doUploadBtn.disabled = true;
+    uploadError.style.display = "none";
+    progressWrap.style.display = "block";
+    progressText.style.display = "block";
+
+    const caption = captionInput.value.trim();
+
+    try {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        progressText.textContent = `Đang upload ${i + 1}/${selectedFiles.length}...`;
+        progressBar.style.width = `${((i) / selectedFiles.length) * 100}%`;
+
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("upload_preset", UPLOAD_PRESET);
+        fd.append("folder", FOLDER);
+        if (caption) fd.append("context", `caption=${caption}`);
+        // Gắn tag để list được qua image/list
+        fd.append("tags", FOLDER);
+
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+          { method: "POST", body: fd }
+        );
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+      }
+
+      progressBar.style.width = "100%";
+      progressText.textContent = "Hoàn thành! 💌";
+      showToast(`Đã đăng ${selectedFiles.length} ảnh thành công 💌`);
+      setTimeout(() => {
+        closeUploadModal();
+        loadPhotos();
+      }, 800);
+
+    } catch(err) {
+      console.error("Upload error:", err);
+      showUploadError("Upload lỗi: " + err.message);
+    } finally {
+      doUploadBtn.disabled = false;
+    }
+  };
+
+  function showUploadError(msg) {
+    uploadError.textContent = msg;
+    uploadError.style.display = "block";
+  }
+
+  // ─── DELETE MODAL ──────────────────────────────
+  function openDeleteModal(public_id) {
+    pendingDeleteId = public_id;
+    deletePassInput.value = "";
+    deleteError.style.display = "none";
+    deleteModal.classList.add("open");
+  }
+
+  document.getElementById("cancelDelete").onclick = () => {
+    deleteModal.classList.remove("open");
+    pendingDeleteId = null;
+  };
+
+  document.getElementById("confirmDelete").onclick = async () => {
+    const password = deletePassInput.value;
+    if (!password) {
+      deleteError.textContent = "Nhập mật khẩu đi nào 🔒";
+      deleteError.style.display = "block";
+      return;
+    }
+    if (!pendingDeleteId) return;
+
+    const btn = document.getElementById("confirmDelete");
+    btn.disabled = true;
+    btn.textContent = "Đang xóa...";
+    deleteError.style.display = "none";
+
+    try {
+      // Gọi Netlify Function để xóa — cần deploy netlify/functions/delete-photo.js
+      const res = await fetch("/.netlify/functions/delete-photo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ public_id: pendingDeleteId, password })
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Xóa thất bại");
+      }
+
+      showToast("Đã xóa ảnh rồi 🗑️");
+      deleteModal.classList.remove("open");
+      pendingDeleteId = null;
+      loadPhotos();
+
+    } catch(err) {
+      console.error("Delete error:", err);
+      deleteError.textContent = err.message;
+      deleteError.style.display = "block";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Xóa đi 🗑️";
+    }
+  };
+
+  // ─── LIGHTBOX ──────────────────────────────────
+  function openLightbox(index) {
+    lbIndex = index;
+    updateLightbox();
+    lightbox.classList.add("open");
+  }
+
+  function updateLightbox() {
+    const photo = photos[lbIndex];
+    lbImg.src = photo.secure_url;
+    lbCaption.textContent = photo.context?.custom?.caption || "";
+    lbDate.textContent = new Date(photo.created_at).toLocaleDateString("vi-VN");
+    lbPrev.style.display = lbIndex > 0 ? "flex" : "none";
+    lbNext.style.display = lbIndex < photos.length - 1 ? "flex" : "none";
+  }
+
+  lbClose.onclick = () => lightbox.classList.remove("open");
+  lbPrev.onclick = () => { if (lbIndex > 0) { lbIndex--; updateLightbox(); } };
+  lbNext.onclick = () => { if (lbIndex < photos.length - 1) { lbIndex++; updateLightbox(); } };
+
+  // Keyboard navigation
+  document.addEventListener("keydown", (e) => {
+    if (!lightbox.classList.contains("open")) return;
+    if (e.key === "ArrowLeft")  lbPrev.click();
+    if (e.key === "ArrowRight") lbNext.click();
+    if (e.key === "Escape")     lightbox.classList.remove("open");
+  });
+
+  // Close modals on backdrop click
+  uploadModal.addEventListener("click", (e) => {
+    if (e.target === uploadModal) closeUploadModal();
+  });
+  deleteModal.addEventListener("click", (e) => {
+    if (e.target === deleteModal) deleteModal.classList.remove("open");
+  });
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) lightbox.classList.remove("open");
+  });
+
+  // ─── TOAST ─────────────────────────────────────
+  function showToast(msg, error = false) {
+    toast.textContent = msg;
+    toast.className = error ? "toast show error" : "toast show";
+    setTimeout(() => { toast.className = "toast"; }, 3000);
+  }
+
+  // ─── INIT ──────────────────────────────────────
+  loadPhotos();
+</script>
+</body>
+</html>
