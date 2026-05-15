@@ -504,287 +504,79 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  let photos = [];
-  let lbIndex = 0;
-  let cloudName = '';
-  let selectedFiles = [];
+const cloudName = "dzuzeuzmv";
+const uploadPreset = "album_upload";
 
-  // ─── INIT ─────────────────────────────────────────────────────
-  async function init() {
-    try {
-      const cfg = await fetch('/api/config').then(r => r.json());
-      cloudName = cfg.cloudName;
-    } catch(e) {}
-    await loadPhotos();
-  }
+let photos = [];
+let selectedFiles = [];
 
-  // ─── LOAD PHOTOS ──────────────────────────────────────────────
-  async function loadPhotos() {
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('gallery').innerHTML = '';
-    document.getElementById('emptyState').style.display = 'none';
+async function loadPhotos() {
+  const res = await fetch(
+    `https://res.cloudinary.com/${cloudName}/image/list/album.json`
+  );
 
-    try {
-      const data = await fetch('/api/photos').then(r => r.json());
-      photos = data.resources || [];
-      renderGallery();
-    } catch(e) {
-      showToast('Không tải được ảnh 😢', true);
-    } finally {
-      document.getElementById('loading').style.display = 'none';
-    }
-  }
+  const data = await res.json();
 
-  // ─── RENDER GALLERY ───────────────────────────────────────────
-  function renderGallery() {
-    const gallery = document.getElementById('gallery');
-    gallery.innerHTML = '';
-    const count = photos.length;
-    document.getElementById('photoCount').textContent =
-      count > 0 ? `${count} khoảnh khắc` : '';
+  photos = data.resources.reverse();
 
-    if (count === 0) {
-      document.getElementById('emptyState').style.display = 'block';
-      return;
-    }
+  renderGallery();
+}
 
-    photos.forEach((photo, i) => {
-      const caption = photo.context?.custom?.caption || '';
-      const date = new Date(photo.created_at).toLocaleDateString('vi-VN', {
-        day: '2-digit', month: '2-digit', year: 'numeric'
-      });
-      const url = photo.secure_url;
+function renderGallery() {
+  const gallery = document.getElementById("gallery");
+  gallery.innerHTML = "";
 
-      // Use Cloudinary transformation for thumbnail
-      const thumb = url.replace('/upload/', '/upload/w_600,c_limit,q_auto,f_auto/');
+  photos.forEach(photo => {
+    const card = document.createElement("div");
+    card.className = "photo-card";
 
-      const card = document.createElement('div');
-      card.className = 'photo-card';
-      card.style.animationDelay = `${(i % 12) * 0.05}s`;
-      card.innerHTML = `
-        <img src="${thumb}" alt="${caption}" loading="lazy">
-        <div class="card-overlay">
-          <div>
-            ${caption ? `<div class="card-caption">${caption}</div>` : ''}
-            <div class="card-date">${date}</div>
-          </div>
-        </div>
-        <button class="btn-delete" data-id="${photo.public_id}" title="Xóa ảnh">✕</button>
-      `;
-      card.querySelector('img').addEventListener('click', () => openLightbox(i));
-      card.querySelector('.card-overlay').addEventListener('click', () => openLightbox(i));
-      card.querySelector('.btn-delete').addEventListener('click', e => {
-        e.stopPropagation();
-        deletePhoto(photo.public_id);
-      });
-      gallery.appendChild(card);
-    });
-  }
+    card.innerHTML = `
+      <img src="https://res.cloudinary.com/${cloudName}/image/upload/${photo.public_id}.jpg">
+    `;
 
-  // ─── LIGHTBOX ─────────────────────────────────────────────────
-  function openLightbox(i) {
-    lbIndex = i;
-    updateLightbox();
-    document.getElementById('lightbox').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  function updateLightbox() {
-    const p = photos[lbIndex];
-    const url = p.secure_url.replace('/upload/', '/upload/w_1400,c_limit,q_auto,f_auto/');
-    document.getElementById('lbImg').src = url;
-    document.getElementById('lbCaption').textContent = p.context?.custom?.caption || '';
-    document.getElementById('lbDate').textContent = new Date(p.created_at).toLocaleDateString('vi-VN', {
-      weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric'
-    });
-    document.getElementById('lbPrev').style.display = lbIndex > 0 ? 'flex' : 'none';
-    document.getElementById('lbNext').style.display = lbIndex < photos.length - 1 ? 'flex' : 'none';
-  }
-
-  document.getElementById('lbClose').addEventListener('click', closeLightbox);
-  document.getElementById('lightbox').addEventListener('click', e => {
-    if (e.target === document.getElementById('lightbox')) closeLightbox();
+    gallery.appendChild(card);
   });
-  document.getElementById('lbPrev').addEventListener('click', () => {
-    if (lbIndex > 0) { lbIndex--; updateLightbox(); }
-  });
-  document.getElementById('lbNext').addEventListener('click', () => {
-    if (lbIndex < photos.length - 1) { lbIndex++; updateLightbox(); }
-  });
-  document.addEventListener('keydown', e => {
-    if (!document.getElementById('lightbox').classList.contains('open')) return;
-    if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft' && lbIndex > 0) { lbIndex--; updateLightbox(); }
-    if (e.key === 'ArrowRight' && lbIndex < photos.length - 1) { lbIndex++; updateLightbox(); }
-  });
+}
 
-  // ─── UPLOAD MODAL ─────────────────────────────────────────────
-  document.getElementById('fabBtn').addEventListener('click', openUploadModal);
-  document.getElementById('closeUpload').addEventListener('click', closeUploadModal);
-  document.getElementById('cancelUpload').addEventListener('click', closeUploadModal);
-  document.getElementById('uploadModal').addEventListener('click', e => {
-    if (e.target === document.getElementById('uploadModal')) closeUploadModal();
-  });
+document.getElementById("fabBtn").onclick = () => {
+  document.getElementById("uploadModal").classList.add("open");
+};
 
-  function openUploadModal() {
-    selectedFiles = [];
-    document.getElementById('previewGrid').innerHTML = '';
-    document.getElementById('captionInput').value = '';
-    document.getElementById('passwordInput').value = '';
-    document.getElementById('uploadError').style.display = 'none';
-    document.getElementById('progressWrap').style.display = 'none';
-    document.getElementById('progressText').style.display = 'none';
-    document.getElementById('doUpload').disabled = false;
-    document.getElementById('uploadModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeUploadModal() {
-    document.getElementById('uploadModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
+document.getElementById("cancelUpload").onclick = () => {
+  document.getElementById("uploadModal").classList.remove("open");
+};
 
-  // Dropzone
-  const dropzone = document.getElementById('dropzone');
-  const fileInput = document.getElementById('fileInput');
+document.getElementById("closeUpload").onclick = () => {
+  document.getElementById("uploadModal").classList.remove("open");
+};
 
-  dropzone.addEventListener('click', () => fileInput.click());
-  dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
-  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-  dropzone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropzone.classList.remove('dragover');
-    handleFiles(e.dataTransfer.files);
-  });
-  fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+document.getElementById("fileInput").addEventListener("change", e => {
+  selectedFiles = [...e.target.files];
+});
 
-  function handleFiles(files) {
-    selectedFiles = Array.from(files);
-    const grid = document.getElementById('previewGrid');
-    grid.innerHTML = '';
-    selectedFiles.forEach(f => {
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(f);
-      grid.appendChild(img);
-    });
-  }
+document.getElementById("doUpload").onclick = async () => {
+  for (const file of selectedFiles) {
+    const fd = new FormData();
 
-  // ─── DO UPLOAD ────────────────────────────────────────────────
-  document.getElementById('doUpload').addEventListener('click', async () => {
-    const password = document.getElementById('passwordInput').value;
-    const caption = document.getElementById('captionInput').value;
-    const errorEl = document.getElementById('uploadError');
-    const progressWrap = document.getElementById('progressWrap');
-    const progressBar = document.getElementById('progressBar');
-    const progressText = document.getElementById('progressText');
+    fd.append("file", file);
+    fd.append("upload_preset", uploadPreset);
+    fd.append("folder", "album");
 
-    errorEl.style.display = 'none';
-
-    if (selectedFiles.length === 0) {
-      errorEl.textContent = 'Chọn ảnh đi đã nào! 🖼️';
-      errorEl.style.display = 'block'; return;
-    }
-    if (!password) {
-      errorEl.textContent = 'Nhập mật khẩu vào nha! 🔒';
-      errorEl.style.display = 'block'; return;
-    }
-
-    document.getElementById('doUpload').disabled = true;
-    progressWrap.style.display = 'block';
-    progressText.style.display = 'block';
-
-    try {
-      // Get signature from server (also verifies password)
-      const sigRes = await fetch('/api/sign-upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password, caption }),
-      });
-      const sigData = await sigRes.json();
-
-      if (!sigRes.ok) {
-        errorEl.textContent = sigData.error || 'Lỗi rồi 😢';
-        errorEl.style.display = 'block';
-        document.getElementById('doUpload').disabled = false;
-        progressWrap.style.display = 'none';
-        progressText.style.display = 'none';
-        return;
+    await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      {
+        method: "POST",
+        body: fd
       }
-
-      let uploaded = 0;
-      for (const file of selectedFiles) {
-        progressText.textContent = `Đang đăng ảnh ${uploaded + 1}/${selectedFiles.length}...`;
-        progressBar.style.width = `${(uploaded / selectedFiles.length) * 100}%`;
-
-        const fd = new FormData();
-        fd.append('file', file);
-        fd.append('api_key', sigData.apiKey);
-        fd.append('timestamp', sigData.timestamp);
-        fd.append('signature', sigData.signature);
-        fd.append('folder', sigData.folder);
-        if (sigData.context) fd.append('context', sigData.context);
-
-        await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-          method: 'POST', body: fd,
-        });
-        uploaded++;
-      }
-
-      progressBar.style.width = '100%';
-      progressText.textContent = '✓ Đã đăng xong rồi 🎉';
-      await new Promise(r => setTimeout(r, 800));
-
-      closeUploadModal();
-      showToast('Đăng ảnh thành công rồi 🐧🐥');
-      await loadPhotos();
-
-    } catch(e) {
-      errorEl.textContent = 'Có lỗi xảy ra, thử lại nhé 😢';
-      errorEl.style.display = 'block';
-      document.getElementById('doUpload').disabled = false;
-      progressWrap.style.display = 'none';
-      progressText.style.display = 'none';
-    }
-  });
-
-  // ─── DELETE PHOTO ─────────────────────────────────────────────
-  async function deletePhoto(publicId) {
-    const password = prompt('Nhập mật khẩu để xóa ảnh nha 🔒');
-    if (!password) return;
-
-    try {
-      const res = await fetch('/api/delete-photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ publicId, password }),
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        showToast(data.error || 'Không xóa được 😢', true);
-        return;
-      }
-      showToast('Đã xóa ảnh rồi 🗑️');
-      await loadPhotos();
-    } catch(e) {
-      showToast('Có lỗi xảy ra 😢', true);
-    }
+    );
   }
 
-  // ─── TOAST ────────────────────────────────────────────────────
-  function showToast(msg, isError = false) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.className = 'toast' + (isError ? ' error' : '');
-    void toast.offsetWidth;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
-  }
+  alert("Đăng ảnh thành công!");
 
-  // ─── START ────────────────────────────────────────────────────
-  init();
+  document.getElementById("uploadModal").classList.remove("open");
+
+  loadPhotos();
+};
+
+loadPhotos();
 </script>
-</body>
-</html>
