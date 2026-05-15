@@ -274,7 +274,11 @@
       border-color: var(--accent); background: #FAF3E4;
     }
     .dropzone .dz-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
-    .dropzone input { display: none; }
+    .dropzone input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }  
     .preview-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
       margin-top: 12px;
@@ -509,12 +513,33 @@ const uploadPreset = "album_upload";
 
 let photos = [];
 let selectedFiles = [];
-
+const lbPrev = document.getElementById("lbPrev");
+const lbNext = document.getElementById("lbNext");
 const gallery = document.getElementById("gallery");
 const loading = document.getElementById("loading");
 const emptyState = document.getElementById("emptyState");
 const photoCount = document.getElementById("photoCount");
+const fabBtn = document.getElementById("fabBtn");
+const uploadModal = document.getElementById("uploadModal");
+const cancelUpload = document.getElementById("cancelUpload");
+const closeUpload = document.getElementById("closeUpload");
 
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("fileInput");
+const previewGrid = document.getElementById("previewGrid");
+
+const captionInput = document.getElementById("captionInput");
+const passwordInput = document.getElementById("passwordInput");
+
+const doUpload = document.getElementById("doUpload");
+
+const lightbox = document.getElementById("lightbox");
+const lbImg = document.getElementById("lbImg");
+const lbCaption = document.getElementById("lbCaption");
+const lbDate = document.getElementById("lbDate");
+const lbClose = document.getElementById("lbClose");
+
+const toast = document.getElementById("toast");
 async function loadPhotos() {
 
   try {
@@ -608,7 +633,44 @@ function closeModal() {
 }
 
 /* preview */
+/* open file explorer */
 
+dropzone.addEventListener("click", () => {
+  fileInput.click();
+});
+  /* drag drop */
+
+dropzone.addEventListener("dragover", e => {
+
+  e.preventDefault();
+
+  dropzone.classList.add("dragover");
+});
+
+dropzone.addEventListener("dragleave", () => {
+
+  dropzone.classList.remove("dragover");
+});
+
+dropzone.addEventListener("drop", e => {
+
+  e.preventDefault();
+
+  dropzone.classList.remove("dragover");
+
+  selectedFiles = [...e.dataTransfer.files];
+
+  previewGrid.innerHTML = "";
+
+  selectedFiles.forEach(file => {
+
+    const img = document.createElement("img");
+
+    img.src = URL.createObjectURL(file);
+
+    previewGrid.appendChild(img);
+  });
+});
 fileInput.addEventListener("change", e => {
 
   selectedFiles = [...e.target.files];
