@@ -510,73 +510,229 @@ const uploadPreset = "album_upload";
 let photos = [];
 let selectedFiles = [];
 
+const gallery = document.getElementById("gallery");
+const loading = document.getElementById("loading");
+const emptyState = document.getElementById("emptyState");
+const photoCount = document.getElementById("photoCount");
+
 async function loadPhotos() {
-  const res = await fetch(
-    `https://res.cloudinary.com/${cloudName}/image/list/album.json`
-  );
 
-  const data = await res.json();
+  try {
 
-  photos = data.resources.reverse();
+    loading.style.display = "block";
 
-  renderGallery();
+    const res = await fetch(
+      `https://res.cloudinary.com/${cloudName}/image/list/album.json`
+    );
+
+    const data = await res.json();
+
+    photos = (data.resources || []).reverse();
+
+    renderGallery();
+
+  } catch(err) {
+
+    console.error(err);
+
+    showToast("Không tải được ảnh", true);
+
+  } finally {
+
+    loading.style.display = "none";
+  }
 }
 
 function renderGallery() {
-  const gallery = document.getElementById("gallery");
+
   gallery.innerHTML = "";
 
-  photos.forEach(photo => {
+  photoCount.textContent =
+    `${photos.length} KHOẢNH KHẮC`;
+
+  if (photos.length === 0) {
+
+    emptyState.style.display = "block";
+    return;
+  }
+
+  emptyState.style.display = "none";
+
+  photos.forEach((photo, index) => {
+
     const card = document.createElement("div");
+
     card.className = "photo-card";
 
     card.innerHTML = `
-      <img src="https://res.cloudinary.com/${cloudName}/image/upload/${photo.public_id}.jpg">
+      <img src="${photo.secure_url}" alt="">
+      
+      <div class="card-overlay">
+        <div>
+          <div class="card-caption">
+            ${photo.context?.custom?.caption || "✨"}
+          </div>
+
+          <div class="card-date">
+            ${new Date(photo.created_at)
+              .toLocaleDateString("vi-VN")}
+          </div>
+        </div>
+      </div>
     `;
+
+    card.onclick = () => openLightbox(index);
 
     gallery.appendChild(card);
   });
 }
 
-document.getElementById("fabBtn").onclick = () => {
-  document.getElementById("uploadModal").classList.add("open");
+/* upload modal */
+
+fabBtn.onclick = () => {
+  uploadModal.classList.add("open");
 };
 
-document.getElementById("cancelUpload").onclick = () => {
-  document.getElementById("uploadModal").classList.remove("open");
-};
+cancelUpload.onclick = closeModal;
+closeUpload.onclick = closeModal;
 
-document.getElementById("closeUpload").onclick = () => {
-  document.getElementById("uploadModal").classList.remove("open");
-};
+function closeModal() {
 
-document.getElementById("fileInput").addEventListener("change", e => {
+  uploadModal.classList.remove("open");
+
+  selectedFiles = [];
+
+  fileInput.value = "";
+
+  previewGrid.innerHTML = "";
+}
+
+/* preview */
+
+fileInput.addEventListener("change", e => {
+
   selectedFiles = [...e.target.files];
+
+  previewGrid.innerHTML = "";
+
+  selectedFiles.forEach(file => {
+
+    const img = document.createElement("img");
+
+    img.src = URL.createObjectURL(file);
+
+    previewGrid.appendChild(img);
+  });
 });
 
-document.getElementById("doUpload").onclick = async () => {
-  for (const file of selectedFiles) {
-    const fd = new FormData();
+/* upload */
 
-    fd.append("file", file);
-    fd.append("upload_preset", uploadPreset);
-    fd.append("folder", "album");
+doUpload.onclick = async () => {
 
-    await fetch(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      {
-        method: "POST",
-        body: fd
-      }
-    );
+  if (selectedFiles.length === 0) {
+    showToast("Chưa chọn ảnh", true);
+    return;
   }
 
-  alert("Đăng ảnh thành công!");
+  doUpload.disabled = true;
 
-  document.getElementById("uploadModal").classList.remove("open");
+  try {
 
-  loadPhotos();
+    for (let i = 0; i < selectedFiles.length; i++) {
+
+      const file = selectedFiles[i];
+
+      const fd = new FormData();
+
+      fd.append("file", file);
+      fd.append("upload_preset", uploadPreset);
+      fd.append("folder", "album");
+
+      const caption =
+        captionInput.value.trim();
+
+      if (caption) {
+
+        fd.append(
+          "context",
+          `caption=${caption}`
+        );
+      }
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: "POST",
+          body: fd
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
+    }
+
+    showToast("Đăng ảnh thành công 💌");
+
+    closeModal();
+
+    loadPhotos();
+
+  } catch(err) {
+
+    console.error(err);
+
+    showToast("Upload lỗi", true);
+
+  } finally {
+
+    doUpload.disabled = false;
+  }
 };
+
+/* lightbox */
+
+function openLightbox(index) {
+
+  const photo = photos[index];
+
+  lbImg.src = photo.secure_url;
+
+  lbCaption.textContent =
+    photo.context?.custom?.caption || "";
+
+  lbDate.textContent =
+    new Date(photo.created_at)
+      .toLocaleDateString("vi-VN");
+
+  lightbox.classList.add("open");
+}
+
+lbClose.onclick = () => {
+  lightbox.classList.remove("open");
+};
+
+/* toast */
+
+function showToast(msg, error = false) {
+
+  toast.textContent = msg;
+
+  toast.className =
+    error
+      ? "toast show error"
+      : "toast show";
+
+  setTimeout(() => {
+
+    toast.className = "toast";
+
+  }, 2500);
+}
 
 loadPhotos();
 </script>
+</body>
+</html>
