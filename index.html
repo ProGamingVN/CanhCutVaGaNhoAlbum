@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Album Couple</title>
+
+  <style>
+    body{
+      font-family: Arial;
+      padding:20px;
+      background:#ffeef2;
+    }
+
+    h1{
+      text-align:center;
+    }
+
+    #gallery{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:20px;
+      margin-top:20px;
+    }
+
+    .card{
+      background:white;
+      padding:10px;
+      border-radius:12px;
+      box-shadow:0 0 10px rgba(0,0,0,0.1);
+    }
+
+    img{
+      width:100%;
+      border-radius:10px;
+    }
+
+    button{
+      margin-top:10px;
+      padding:8px 12px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    .delete{
+      background:red;
+      color:white;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Album của tụi mình ❤️</h1>
+
+<input type="file" id="imageInput">
+<button onclick="uploadImage()">Đăng ảnh</button>
+
+<div id="gallery"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+
+const firebaseConfig = {
+  apiKey: "DÁN_APIKEY",
+  authDomain: "DÁN_AUTHDOMAIN",
+  projectId: "DÁN_PROJECTID",
+  storageBucket: "DÁN_STORAGEBUCKET",
+  messagingSenderId: "DÁN_ID",
+  appId: "DÁN_APPID"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+const gallery = document.getElementById("gallery");
+
+async function loadImages(){
+
+  gallery.innerHTML="";
+
+  const querySnapshot = await getDocs(collection(db,"images"));
+
+  querySnapshot.forEach((document)=>{
+
+    const data=document.data();
+
+    const div=document.createElement("div");
+
+    div.className="card";
+
+    div.innerHTML=`
+      <img src="${data.url}">
+      <button class="delete">Xóa</button>
+    `;
+
+    div.querySelector("button").onclick=async()=>{
+
+      await deleteObject(ref(storage,data.path));
+
+      await deleteDoc(doc(db,"images",document.id));
+
+      loadImages();
+    };
+
+    gallery.appendChild(div);
+
+  });
+}
+
+window.uploadImage = async function(){
+
+  const file=document.getElementById("imageInput").files[0];
+
+  if(!file){
+    alert("Chọn ảnh đi");
+    return;
+  }
+
+  const path="images/"+Date.now()+"_"+file.name;
+
+  const storageRef=ref(storage,path);
+
+  await uploadBytes(storageRef,file);
+
+  const url=await getDownloadURL(storageRef);
+
+  await addDoc(collection(db,"images"),{
+    url:url,
+    path:path
+  });
+
+  loadImages();
+};
+
+loadImages();
+
+</script>
+
+</body>
+</html>
