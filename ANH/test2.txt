@@ -1,3 +1,0 @@
-# 🐧 Cánh Cụt & Gà Nhỏ - Memory Album Website
-
-A beautiful, simple, and secure photo album website to cherish precious memories between two special people. Built with vanilla HTML/CSS/JavaScript, Netlify Functions, and Cloudinary storage.
