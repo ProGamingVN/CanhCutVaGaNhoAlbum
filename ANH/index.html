@@ -1,0 +1,2336 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>🐧 Cánh Cụt & Gà Nhỏ 🐥</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #F3EBD8;
+      --bg2:    #EDE0C8;
+      --card:   #FDFAF3;
+      --text:   #1C0F06;
+      --muted:  #7A5C42;
+      --accent: #B8633A;
+      --accent2:#D4956A;
+      --border: #DFD0B8;
+      --white:  #FFFDF8;
+      --shadow: rgba(28,15,6,0.12);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:     #1A1208;
+        --bg2:    #231A0D;
+        --card:   #2A1E10;
+        --text:   #F0E6D3;
+        --muted:  #A8896B;
+        --accent: #D4844A;
+        --accent2:#E8A870;
+        --border: #3D2E1C;
+        --white:  #F8F0E3;
+        --shadow: rgba(0,0,0,0.35);
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1000; opacity: 0.5;
+    }
+
+    /* ── LOGIN SCREEN ── */
+    #loginScreen {
+      position: fixed; inset: 0; z-index: 900;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      transition: opacity 0.5s ease;
+    }
+    #loginScreen.hidden { opacity: 0; pointer-events: none; }
+
+    .login-box {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%; max-width: 380px;
+      box-shadow: 0 24px 60px var(--shadow);
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .login-emoji { font-size: 2.8rem; margin-bottom: 12px; display: block; }
+    .login-box h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 400;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .login-box p {
+      font-style: italic; color: var(--muted);
+      font-size: 0.95rem; margin-bottom: 28px;
+    }
+    #loginInput {
+      width: 100%; padding: 13px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px; background: var(--bg);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--text);
+      text-align: center; letter-spacing: 0.15em;
+      transition: border-color 0.2s, transform 0.1s;
+      margin-bottom: 12px;
+    }
+    #loginInput:focus { outline: none; border-color: var(--accent); }
+    #loginInput.shake {
+      animation: shake 0.4s ease;
+      border-color: #c0392b;
+    }
+    #loginError {
+      color: #c0392b; font-size: 0.88rem; font-style: italic;
+      min-height: 20px; margin-bottom: 8px;
+    }
+    #loginBtn {
+      width: 100%; padding: 13px;
+      background: var(--accent); color: white;
+      border: none; border-radius: 8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.05em;
+    }
+    #loginBtn:hover { background: #9f5230; }
+    #loginBtn:active { transform: scale(0.98); }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-5px); }
+      80%      { transform: translateX(5px); }
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 56px 24px 36px;
+      position: relative;
+    }
+    .header-line {
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      margin-bottom: 8px;
+    }
+    .header-line::before, .header-line::after {
+      content: ''; height: 1px; width: 80px;
+      background: linear-gradient(90deg, transparent, var(--accent));
+    }
+    .header-line::after { background: linear-gradient(90deg, var(--accent), transparent); }
+    .header-emoji { font-size: 1.4rem; }
+
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 400; letter-spacing: 0.01em;
+      color: var(--text); line-height: 1.1;
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+    .subtitle {
+      margin-top: 10px; font-size: 1rem;
+      color: var(--muted); font-style: italic; letter-spacing: 0.05em;
+    }
+    .photo-count {
+      margin-top: 6px; font-size: 0.8rem;
+      color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 40px; margin-bottom: 32px;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .divider span { color: var(--accent); font-size: 1rem; }
+
+    /* ── GALLERY ── */
+    .gallery-wrap { padding: 0 20px 140px; max-width: 1400px; margin: 0 auto; }
+
+    .gallery { columns: 4; column-gap: 14px; }
+    @media (max-width: 1100px) { .gallery { columns: 3; } }
+    @media (max-width: 700px)  { .gallery { columns: 2; column-gap: 10px; } }
+    @media (max-width: 400px)  { .gallery { columns: 2; column-gap: 8px; } }
+
+    .photo-card {
+      break-inside: avoid; margin-bottom: 14px;
+      position: relative; border-radius: 8px;
+      overflow: hidden; cursor: pointer;
+      background: var(--card);
+      box-shadow: 0 2px 12px var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .photo-card.new-card {
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.88); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .photo-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px var(--shadow); }
+
+    .photo-card img {
+      width: 100%; display: block;
+      transition: filter 0.3s ease;
+      /* Skeleton while loading */
+      min-height: 60px;
+      background: var(--bg2);
+    }
+    .photo-card:hover img { filter: brightness(0.88); }
+
+    /* Skeleton shimmer */
+    .photo-card img.loading-img {
+      background: linear-gradient(90deg, var(--bg2) 25%, var(--border) 50%, var(--bg2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(28,15,6,0.75) 0%, transparent 55%);
+      opacity: 0; transition: opacity 0.3s ease;
+      display: flex; align-items: flex-end; padding: 14px;
+    }
+    .photo-card:hover .card-overlay { opacity: 1; }
+    /* Always show on mobile */
+    @media (hover: none) { .card-overlay { opacity: 1; } }
+
+    .card-caption { color: #fff; font-size: 0.88rem; font-style: italic; line-height: 1.4; }
+    .card-date { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 2px; letter-spacing: 0.05em; }
+
+    .btn-delete {
+      position: absolute; top: 8px; right: 8px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(28,15,6,0.6); border: none;
+      color: white; font-size: 0.7rem; cursor: pointer;
+      opacity: 0; transition: opacity 0.2s;
+      display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    .photo-card:hover .btn-delete { opacity: 1; }
+    @media (hover: none) { .btn-delete { opacity: 0.8; } }
+    .btn-delete:hover { background: #c0392b; }
+
+    .btn-edit {
+      position: absolute; top: 8px; right: 40px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(28,15,6,0.6); border: none;
+      color: white; font-size: 0.7rem; cursor: pointer;
+      opacity: 0; transition: opacity 0.2s;
+      display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    .photo-card:hover .btn-edit { opacity: 1; }
+    @media (hover: none) { .btn-edit { opacity: 0.8; } }
+    .btn-edit:hover { background: #c0392b; }
+
+    .fav-btn {
+      position: absolute; top: 8px; left: 8px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(28,15,6,0.5); border: none;
+      color: white; font-size: 0.8rem; cursor: pointer;
+      opacity: 0; transition: opacity 0.2s, transform 0.15s;
+      display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    .photo-card:hover .fav-btn { opacity: 1; }
+    @media (hover: none) { .fav-btn { opacity: 0.8; } }
+    .fav-btn.active { color: #e74c3c; }
+    .fav-btn:active { transform: scale(1.3); }
+
+    /* ── EMPTY / LOADING ── */
+    .empty { text-align: center; padding: 80px 20px; color: var(--muted); }
+    .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+    .empty h2 {
+      font-family: 'Playfair Display', serif; font-size: 1.6rem;
+      font-weight: 400; margin-bottom: 8px; color: var(--text);
+    }
+    .empty p { font-style: italic; }
+
+    .loading { text-align: center; padding: 80px 20px; color: var(--muted); }
+    .spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── FAB ── */
+    .fab {
+      position: fixed; bottom: 32px; right: 32px;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--accent); color: var(--white);
+      border: none; cursor: pointer; font-size: 1.6rem;
+      box-shadow: 0 6px 24px rgba(184,99,58,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 100; display: flex; align-items: center; justify-content: center;
+    }
+    .fab:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(184,99,58,0.6); }
+    .fab:active { transform: scale(0.95); }
+    @media (max-width: 600px) { .fab { bottom: 24px; right: 20px; width: 54px; height: 54px; } }
+
+    /* ── MODAL BASE ── */
+    .modal-bg {
+      position: fixed; inset: 0;
+      background: rgba(28,15,6,0.6);
+      backdrop-filter: blur(5px);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-bg.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 14px; padding: 36px;
+      width: 100%; max-width: 460px;
+      box-shadow: 0 24px 60px rgba(28,15,6,0.3);
+      transform: translateY(24px);
+      transition: transform 0.3s ease;
+      position: relative;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-bg.open .modal { transform: translateY(0); }
+
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem; font-weight: 400;
+      margin-bottom: 5px; color: var(--text);
+    }
+    .modal .modal-sub { font-style: italic; color: var(--muted); font-size: 0.93rem; margin-bottom: 22px; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 0.78rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted); margin-bottom: 5px;
+    }
+    .field input, .field textarea, .field select {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: 7px;
+      background: var(--bg); font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: var(--text);
+      transition: border-color 0.2s; resize: vertical;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: var(--accent);
+    }
+
+    /* Category chips */
+    .cat-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .cat-chip {
+      padding: 5px 12px; border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--bg); color: var(--muted);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.88rem; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cat-chip:hover { border-color: var(--accent2); color: var(--accent); }
+    .cat-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed var(--border); border-radius: 10px;
+      padding: 26px 20px; text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      color: var(--muted); font-style: italic;
+      background: var(--bg); position: relative;
+    }
+    .dropzone:hover, .dropzone.dragover { border-color: var(--accent); background: var(--bg2); }
+    .dropzone .dz-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+    .dropzone input { position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
+
+    .preview-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 12px;
+    }
+    .preview-grid .prev-item { position: relative; aspect-ratio: 1/1; }
+    .preview-grid img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 5px;
+    }
+    .prev-remove {
+      position: absolute; top: 3px; right: 3px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(0,0,0,0.65); color: white;
+      border: none; font-size: 0.6rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Progress */
+    .progress-bar-wrap {
+      height: 5px; background: var(--border); border-radius: 5px;
+      margin: 12px 0; overflow: hidden; display: none;
+    }
+    .progress-bar {
+      height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 5px; transition: width 0.3s ease; width: 0%;
+    }
+    .progress-text {
+      text-align: center; font-size: 0.84rem; color: var(--muted);
+      font-style: italic; margin-bottom: 12px; display: none;
+    }
+
+    .error-msg {
+      color: #c0392b; font-size: 0.88rem; text-align: center;
+      margin-bottom: 10px; font-style: italic; display: none;
+    }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+    .btn {
+      flex: 1; padding: 12px;
+      border-radius: 7px; border: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.03em;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: #9f5230; }
+    .btn-primary:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+    .btn-secondary { background: var(--bg); color: var(--muted); border: 1.5px solid var(--border); }
+    .btn-secondary:hover { background: var(--bg2); }
+    .modal-close {
+      position: absolute; top: 14px; right: 14px;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.1rem; color: var(--muted);
+      width: 28px; height: 28px; display: flex;
+      align-items: center; justify-content: center;
+      border-radius: 50%; transition: background 0.2s;
+    }
+    .modal-close:hover { background: var(--bg2); }
+
+    /* Delete modal */
+    .delete-modal .modal { max-width: 360px; text-align: center; }
+    .delete-modal .modal h2 { font-size: 1.3rem; margin-bottom: 8px; }
+    .delete-modal .modal p { color: var(--muted); font-style: italic; margin-bottom: 18px; }
+
+    /* ── LIGHTBOX ── */
+    .lightbox-bg {
+      position: fixed; inset: 0;
+      background: rgba(8,4,2,0.94);
+      backdrop-filter: blur(8px);
+      z-index: 300;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .lightbox-bg.open { opacity: 1; pointer-events: all; }
+
+    .lightbox {
+      max-width: 90vw; max-height: 90vh;
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      user-select: none;
+    }
+    .lightbox img {
+      max-width: 90vw; max-height: 80vh;
+      object-fit: contain; border-radius: 4px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transition: opacity 0.2s ease;
+    }
+    .lightbox-caption {
+      color: rgba(255,255,255,0.85); font-style: italic;
+      font-size: 1rem; margin-top: 14px; text-align: center; max-width: 600px;
+    }
+    .lightbox-date { color: rgba(255,255,255,0.38); font-size: 0.78rem; margin-top: 4px; letter-spacing: 0.08em; }
+
+    .lb-close {
+      position: fixed; top: 18px; right: 22px;
+      background: rgba(255,255,255,0.12); border: none;
+      color: rgba(255,255,255,0.8); font-size: 1.4rem;
+      width: 40px; height: 40px; border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .lb-close:hover { background: rgba(255,255,255,0.22); }
+
+    .lb-nav {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.12); border: none; color: white;
+      font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%;
+      cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lb-nav:hover { background: rgba(255,255,255,0.25); }
+    .lb-prev { left: 14px; } .lb-next { right: 14px; }
+    @media (max-width: 600px) {
+      .lb-prev { left: 6px; } .lb-next { right: 6px; }
+      .lb-nav { width: 36px; height: 36px; font-size: 1.1rem; }
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 110px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text); color: var(--white);
+      padding: 11px 24px; border-radius: 40px;
+      font-size: 0.88rem; z-index: 500;
+      opacity: 0; transition: all 0.3s;
+      pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #c0392b; }
+    .toast.success { background: #27ae60; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .search-bar {
+  margin: 20px 0;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.search-bar input {
+  width: 250px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  background: var(--background: var(--bg);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--text);
+  transition: border-color 0.2s;
+}
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.search-bar button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.search-bar button:hover {
+  background: var(--bg2);
+  color: var(--accent);
+  transform: scale(1.1);
+}
+
+/* Photo card enhancements for new features */
+.photo-card {
+  /* existing styles */
+}
+
+/* Edit button (pencil icon) */
+.btn-edit {
+  position: absolute; top: 8px; right: 40px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(28,15,6,0.6); border: none;
+  color: white; font-size: 0.7rem; cursor: pointer;
+  opacity: 0; transition: opacity 0.2s;
+  display: flex; align-items: center; justify-content: center; z-index: 10;
+}
+.photo-card:hover .btn-edit { opacity: 1; }
+@media (hover: none) { .btn-edit { opacity: 0.8; } }
+.btn-edit:hover { background: #c0392b; }
+
+/* Info button (info icon) */
+.btn-info {
+  position: absolute; top: 8px; right: 72px;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(28,15,6,0.6); border: none;
+  color: white; font-size: 0.7rem; cursor: pointer;
+  opacity: 0; transition: opacity 0.2s;
+  display: flex; align-items: center; justify-content: center; z-index: 10;
+}
+.photo-card:hover .btn-info { opacity: 1; }
+@media (hover: none) { .btn-info { opacity: 0.8; } }
+.btn-info:hover { background: #c0392b; }
+
+/* Checkbox for multi-select */
+.photo-checkbox {
+  position: absolute; top: 8px; left: 8px;
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s;
+}
+.photo-checkbox:hover {
+  border-color: var(--accent);
+  background: var(--bg2);
+}
+.photo-checkbox.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.photo-checkbox.checked::after {
+  content: "✓";
+  color: white;
+  font-size: 14px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Multi-select container styles */
+.multi-select-active .photo-card {
+  opacity: 0.6;
+}
+.multi-select-active .photo-card.checked {
+  opacity: 1;
+  transform: scale(1.02);
+}
+
+/* Info tooltip */
+.info-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, bottom 0.2s;
+}
+.photo-card:hover .info-tooltip {
+  opacity: 1;
+  bottom: calc(100% + 8px);
+}
+
+/* Category chips in card */
+.card-categories {
+  display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px;
+}
+.cat-chip-sm {
+  padding: 2px 6px; border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg2); color: var(--muted);
+  font-size: 0.7rem;
+}
+
+/* Animation enhancements */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.pulse-animate {
+  animation: pulse 0.6s ease-in-out;
+}
+
+/* Edit modal specific styles */
+.edit-field {
+  margin-bottom: 14px;
+}
+.edit-field label {
+  display: block; font-size: 0.78rem; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin-bottom: 5px;
+}
+.edit-field input, .edit-field textarea, .edit-field select {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--border); border-radius: 7px;
+  background: var(--bg); font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; color: var(--text);
+  transition: border-color 0.2s; resize: vertical;
+}
+.edit-field input:focus, .edit-field textarea:focus, .edit-field select:focus {
+  outline: none; border-color: var(--accent);
+}
+
+/* Category chips in edit modal */
+.edit-cat-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.edit-cat-chip {
+  padding: 5px 12px; border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--bg); color: var(--muted);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.88rem; cursor: pointer;
+  transition: all 0.15s;
+}
+.edit-cat-chip:hover { border-color: var(--accent2); color: var(--accent); }
+.edit-cat-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+/* Custom category input */
+.custom-category-input {
+  display: flex; gap: 8px; align-items: center; margin-top: 8px;
+}
+.custom-category-input input {
+  flex: 1; padding: 8px 12px;
+  border: 1.5px solid var(--border); border-radius: 5px;
+  background: var(--bg); font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem; color: var(--text);
+}
+.custom-category-input input:focus {
+  outline: none; border-color: var(--accent);
+}
+.custom-category-input button {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: none; background: var(--accent); color: white;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; transition: all 0.2s;
+}
+.custom-category-input button:hover {
+  background: var(--accent2);
+  transform: scale(1.1);
+}
+
+/* Memorial date input */
+.memorial-date-input {
+  display: flex; gap: 8px; align-items: center; margin-top: 8px;
+}
+.memorial-date-input input {
+  flex: 1; padding: 8px 12px;
+  border: 1.5px solid var(--border); border-radius: 5px;
+  background: var(--bg); font-family: 'Cormorant Garamond', serif;
+  font-size: 0.9rem; color: var(--text);
+}
+.memorial-date-input input:focus {
+  outline: none; border-color: var(--accent);
+}
+.memorial-date-input button {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: none; background: var(--accent); color: white;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; transition: all 0.2s;
+}
+.memorial-date-input button:hover {
+  background: var(--accent2);
+  transform: scale(1.1);
+}
+
+/* Multi-select toolbar */
+.multi-select-toolbar {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px var(--shadow);
+  z-index: 1000 !important;
+}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <span class="login-emoji">🐧🐥</span>
+    <h2>Cánh Cụt & Gà Nhỏ</h2>
+    <p>nhập mật khẩu để vào album nha~</p>
+    <input type="password" id="loginInput" placeholder="••••••••" autocomplete="current-password">
+    <div id="loginError">&nbsp;</div>
+    <button id="loginBtn">Vào album 💌</button>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="app" style="display:none">
+
+<header>
+  <div class="header-line">
+    <span class="header-emoji">🐧</span>
+    <span class="header-emoji">🐥</span>
+  </div>
+  <h1>Cánh Cụt <em>&</em> Gà Nhỏ</h1>
+  <p class="subtitle">những khoảnh khắc nhỏ xinh của chúng mình 🤍</p>
+  <p class="photo-count" id="photoCount"></p>
+</header>
+
+<div class="divider"><span>✦</span></div>
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Tìm kiếm theo caption...">
+  <button type="button" id="filterBtn" class="material-icons" title="Lọc theo danh mục">filter_list</button>
+</div>
+
+<div class="gallery-wrap">
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Đang tải ảnh lên nào...</p>
+  </div>
+  <div id="emptyState" class="empty" style="display:none">
+    <div class="empty-icon">📷</div>
+    <h2>Chưa có ảnh nào cả</h2>
+    <p>Nhấn nút 🐧 bên dưới để đăng ảnh đầu tiên nhé!</p>
+  </div>
+  <div class="gallery" id="gallery"></div>
+</div>
+
+<button class="fab" id="fabBtn" title="Đăng ảnh mới">🐧</button>
+
+</div><!-- /#app -->
+
+<!-- ── UPLOAD MODAL ── -->
+<div class="modal-bg" id="uploadModal">
+  <div class="modal">
+    <button class="modal-close" id="closeUpload">✕</button>
+    <h2>Đăng ảnh mới 📸</h2>
+    <p class="modal-sub">chỉ hai đứa mình thôi nhé~</p>
+
+    <div class="field">
+      <label>Chọn ảnh</label>
+      <div class="dropzone" id="dropzone">
+        <span class="dz-icon">🖼️</span>
+        <span id="dzText">Nhấn để chọn hoặc kéo thả ảnh vào đây</span>
+        <div class="preview-grid" id="previewGrid"></div>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Caption (không bắt buộc)</label>
+      <textarea id="captionInput" rows="2" placeholder="Hôm nay hai đứa mình..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Category</label>
+      <div class="cat-chips" id="catChips">
+        <span class="cat-chip" data-val="food">🍜 Thức ăn</span>
+        <span class="cat-chip" data-val="outing">🚶 Đi chơi</span>
+        <span class="cat-chip" data-val="study">📚 Học tập</span>
+        <span class="cat-chip" data-val="vibe">😭 Vô tri</span>
+        <span class="cat-chip" data-val="happy">🎉 Vui</span>
+        <span class="cat-chip" data-val="memory">💌 Kỷ niệm</span>
+        <span class="cat-chip" data-val="night">🌃 Ban đêm</span>
+        <span class="cat-chip" data-val="sunset">🌅 Hoàng hôn</span>
+        <span class="cat-chip" data-val="random">💤 Random</span>
+        <span class="cat-chip" data-val="uncategorized">📝 Chưa phân loại</span>
+      </div>
+    </div>
+
+
+    <div class="progress-bar-wrap" id="progressWrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText"></div>
+    <div class="error-msg" id="uploadError"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelUpload">Thôi</button>
+      <button class="btn btn-primary" id="doUpload">Đăng lên 💌</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── DELETE MODAL ── -->
+<div class="modal-bg delete-modal" id="deleteModal">
+  <div class="modal">
+    <h2>Xóa ảnh này? 🥺</h2>
+    <p>Sau khi xóa thì không lấy lại được đâu nha...</p>
+    <div class="error-msg" id="deleteError"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelDelete">Thôi</button>
+      <button class="btn btn-primary" id="confirmDelete" style="background:#c0392b">Xóa đi 🗑️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox-bg" id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-nav lb-prev" id="lbPrev">‹</button>
+  <button class="lb-nav lb-next" id="lbNext">›</button>
+  <div class="lightbox">
+    <img id="lbImg" src="" alt="">
+    <div class="lightbox-caption" id="lbCaption"></div>
+    <div class="lightbox-date" id="lbDate"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+// ⚙️  CẤU HÌNH — thay đổi các giá trị này
+// =============================================
+const CLOUD_NAME    = "dzuzeuzmv";
+const UPLOAD_PRESET = "album_upload";
+const FOLDER        = "album";
+const SESSION_KEY   = "album_auth";
+// =============================================
+
+// Category label map
+const CAT_LABELS = {
+  food:"🍜 Thức ăn", outing:"🚶 Đi chơi", study:"📚 Học tập",
+  vibe:"😭 Vô tri", happy:"🎉 Vui", memory:"💌 Kỷ niệm",
+  night:"🌃 Ban đêm", sunset:"🌅 Hoàng hôn", random:"💤 Random",
+  uncategorized:"📝 Chưa phân loại"
+};
+
+// Default categories for new custom categories
+let customCategories = JSON.parse(localStorage.getItem("customCategories") || "[]");
+
+// State variables
+let photos     = [];
+let lbIndex    = 0;
+let pendingDeleteId = null;
+let selectedFiles   = [];
+let selectedCategory = "";
+let favorites  = JSON.parse(localStorage.getItem("fav_ids") || "[]");
+let filterText = "";
+let filterCategory = ""; // For category filter
+let password = null;
+let multiSelectMode = false; // For multi-select mode
+let selectedPhotos = new Set(); // Store selected photo IDs for multi-select
+
+// ── DOM refs ──
+const loginScreen  = document.getElementById("loginScreen");
+const loginInput   = document.getElementById("loginInput");
+const loginBtn     = document.getElementById("loginBtn");
+const loginError   = document.getElementById("loginError");
+const appEl        = document.getElementById("app");
+const gallery      = document.getElementById("gallery");
+const loadingEl    = document.getElementById("loading");
+const emptyState   = document.getElementById("emptyState");
+const photoCount   = document.getElementById("photoCount");
+const fabBtn       = document.getElementById("fabBtn");
+const uploadModal  = document.getElementById("uploadModal");
+const deleteModal  = document.getElementById("deleteModal");
+const dropzone     = document.getElementById("dropzone");
+const fileInput    = document.getElementById("fileInput");
+const previewGrid  = document.getElementById("previewGrid");
+const dzText       = document.getElementById("dzText");
+const captionInput = document.getElementById("captionInput");
+const doUploadBtn  = document.getElementById("doUpload");
+const progressWrap = document.getElementById("progressWrap");
+const progressBar  = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+const uploadError  = document.getElementById("uploadError");
+const lightbox     = document.getElementById("lightbox");
+const lbImg        = document.getElementById("lbImg");
+const lbCaption    = document.getElementById("lbCaption");
+const lbDate       = document.getElementById("lbDate");
+const lbClose      = document.getElementById("lbClose");
+const lbPrev       = document.getElementById("lbPrev");
+const lbNext       = document.getElementById("lbNext");
+const toast        = document.getElementById("toast");
+const deleteError  = document.getElementById("deleteError");
+const deletePassInput = document.getElementById("deletePasswordInput");
+const searchInput = document.getElementById("searchInput");
+const filterBtn = document.getElementById("filterBtn");
+// Multi-select UI elements will be created dynamically
+
+// ── LOGIN ──────────────────────────────────────
+function checkAuth() {
+  const stored = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+  return stored === "1";
+}
+
+function doLogin() {
+  const val = loginInput.value;
+  // Kiểm tra qua Netlify Function (gửi password lên server validate)
+  // Để không lộ password trong source, ta validate gián tiếp bằng cách thử delete một ảnh giả
+  // Hoặc đơn giản hơn: dùng hash
+  // Ở đây ta hash SHA-256 phía client rồi so sánh với hash cứng
+  // Hash SHA-256 của password bạn — đổi lại cho đúng!
+  // Để tạo hash: https://emn178.github.io/online-tools/sha256.html
+  const PASS_HASH = "e88d630e876f725bdf988d4d28a467f0e395a38bd0d03343152052ab8af02d86"; // ← thay hash SHA-256 password của bạn vào đây
+
+  crypto.subtle.digest("SHA-256", new TextEncoder().encode(val)).then(buf => {
+    const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if (PASS_HASH === "" || hash === PASS_HASH) {
+      // Nếu chưa set hash, tạm thời bypass để dev (xóa điều kiện thứ 2 khi dùng thật)
+      password = val;
+      sessionStorage.setItem(SESSION_KEY, "1");
+      loginScreen.classList.add("hidden");
+      setTimeout(() => { loginScreen.style.display = "none"; }, 500);
+      appEl.style.display = "block";
+      loadPhotos();
+    } else {
+      loginInput.classList.add("shake");
+      loginError.textContent = "Sai mật khẩu rồi 🔒";
+      setTimeout(() => loginInput.classList.remove("shake"), 500);
+    }
+  });
+}
+
+loginBtn.onclick = doLogin;
+loginInput.onkeydown = (e) => { if (e.key === "Enter") doLogin(); };
+
+if (checkAuth()) {
+  loginScreen.style.display = "none";
+  appEl.style.display = "block";
+  loadPhotos();
+}
+
+// ── LOAD PHOTOS ────────────────────────────────
+async function loadPhotos() {
+  loadingEl.style.display = "block";
+  gallery.innerHTML = "";
+  try {
+    const res = await fetch("/.netlify/functions/get-photos");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    photos = data.resources || [];
+    renderGallery();
+  } catch(err) {
+    console.error("loadPhotos:", err);
+    showToast("Không tải được ảnh 😢", true);
+  } finally {
+    loadingEl.style.display = "none";
+  }
+}
+
+<!-- ── RENDER GALLERY ───────────────────────────── -->
+function renderGallery() {
+  // Filter by text search
+  let filtered = photos.filter(photo => {
+    const text = (photo.context?.caption ?? "").toLowerCase();
+    return text.includes(filterText.toLowerCase());
+  });
+
+  // Filter by category if selected
+  if (filterCategory) {
+    filtered = filtered.filter(photo => {
+      const photoCategories = photo.context?.category ?
+        (Array.isArray(photo.context.category) ? photo.context.category : [photo.context.category]) : [];
+      return photoCategories.includes(filterCategory);
+    });
+  }
+
+  // Sort by relevance: photos with more matching categories first
+  if (filterCategory) {
+    filtered.sort((a, b) => {
+      const aCategories = a.context?.category ?
+        (Array.isArray(a.context.category) ? a.context.category : [a.context.category]) : [];
+      const bCategories = b.context?.category ?
+        (Array.isArray(b.context.category) ? b.context.category : [b.context.category]) : [];
+
+      const aMatch = aCategories.includes(filterCategory) ? 1 : 0;
+      const bMatch = bCategories.includes(filterCategory) ? 1 : 0;
+      return bMatch - aMatch; // Descending order (more matches first)
+    });
+  }
+
+  gallery.innerHTML = "";
+  photoCount.textContent = `${filtered.length} KHOẢNH KHẮC`;
+  emptyState.style.display = filtered.length === 0 ? "block" : "none";
+
+  filtered.forEach((photo, index) => {
+    gallery.appendChild(createCard(photo, index));
+  });
+}
+
+function createCard(photo, index, isNew = false) {
+  const card = document.createElement("div");
+  card.className = "photo-card" + (isNew ? " new-card" : "");
+  card.dataset.publicId = photo.public_id;
+
+  const caption  = photo.context?.caption || "";
+  const date     = new Date(photo.created_at).toLocaleDateString("vi-VN");
+  const isFav    = favorites.includes(photo.public_id);
+  const memorialDate = photo.context?.memorialDate ?
+    new Date(photo.context.memorialDate).toLocaleDateString("vi-VN") :
+    date; // Show memorial date if available, otherwise upload date
+
+  // Get categories as array for display
+  const photoCategories = photo.context?.category ?
+    (Array.isArray(photo.context.category) ? photo.context.category : [photo.context.category]) : [];
+
+  // Dùng Cloudinary transformation để resize tự động
+  const thumbUrl = getOptimizedUrl(photo.secure_url, 600);
+
+  card.innerHTML = `
+    <img src="${thumbUrl}" loading="lazy" alt="${caption}" class="loading-img">
+    <div class="card-overlay">
+      <div>
+        <div class="card-caption">${caption || "✨"}</div>
+        <div class="card-date">${memorialDate}</div>
+        <!-- Category chips -->
+        <div class="card-categories">
+          ${photoCategories.map(cat => `<span class="cat-chip-sm">${CAT_LABELS[cat] || cat}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+    <button class="fav-btn${isFav ? " active" : ""}" title="Yêu thích">${isFav ? "❤️" : "🤍"}</button>
+    <button class="btn-edit material-icons" title="Chỉnh sửa">edit</button>
+    <button class="btn-info material-icons" title="Thông tin">info</button>
+    <button class="btn-delete" title="Xóa ảnh">✕</button>
+    <div class="photo-checkbox"></div>
+  `;
+
+  const img = card.querySelector("img");
+  img.onload = () => img.classList.remove("loading-img");
+  img.onerror = () => img.classList.remove("loading-img");
+
+  img.addEventListener("click", () => openLightbox(index));
+  card.querySelector(".card-overlay").addEventListener("click", () => openLightbox(index));
+
+  card.querySelector(".fav-btn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleFav(photo.public_id, card.querySelector(".fav-btn"));
+  });
+
+  card.querySelector(".btn-edit").addEventListener("click", (e) => {
+    e.stopPropagation();
+    openEditModal(photo.public_id, index);
+  });
+
+  card.querySelector(".btn-info").addEventListener("click", (e) => {
+    e.stopPropagation();
+    showInfoTooltip(photo, card.querySelector(".btn-info"));
+  });
+
+  card.querySelector(".btn-delete").addEventListener("click", (e) => {
+    e.stopPropagation();
+    openDeleteModal(photo.public_id);
+  });
+
+  // Checkbox for multi-select
+  const checkbox = card.querySelector(".photo-checkbox");
+  checkbox.addEventListener("click", (e) => {
+    e.stopPropagation();
+    togglePhotoSelection(photo.public_id, checkbox);
+  });
+
+  return card;
+}
+
+// Cloudinary auto-optimize URL
+function getOptimizedUrl(url, w) {
+  return url.replace("/upload/", `/upload/w_${w},f_auto,q_auto/`);
+}
+
+// ── FAVORITE ───────────────────────────────────
+function toggleFav(public_id, btn) {
+  const idx = favorites.indexOf(public_id);
+  if (idx === -1) {
+    favorites.push(public_id);
+    btn.textContent = "❤️"; btn.classList.add("active");
+  } else {
+    favorites.splice(idx, 1);
+    btn.textContent = "🤍"; btn.classList.remove("active");
+  }
+  localStorage.setItem("fav_ids", JSON.stringify(favorites));
+}
+
+// ── CATEGORY CHIPS ─────────────────────────────
+document.querySelectorAll(".cat-chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
+    if (selectedCategory === chip.dataset.val) {
+      selectedCategory = "";
+    } else {
+      selectedCategory = chip.dataset.val;
+      chip.classList.add("active");
+    }
+  });
+});
+
+// ── UPLOAD MODAL ───────────────────────────────
+fabBtn.onclick = () => uploadModal.classList.add("open");
+document.getElementById("cancelUpload").onclick = closeUploadModal;
+document.getElementById("closeUpload").onclick  = closeUploadModal;
+
+function closeUploadModal() {
+  uploadModal.classList.remove("open");
+  selectedFiles = []; selectedCategory = "";
+  fileInput.value = ""; previewGrid.innerHTML = "";
+  captionInput.value = "";
+  uploadError.style.display = "none";
+  progressWrap.style.display = "none";
+  progressText.style.display = "none";
+  progressBar.style.width = "0%";
+  dzText.textContent = "Nhấn để chọn hoặc kéo thả ảnh vào đây";
+  document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
+}
+
+// Dropzone
+dropzone.addEventListener("click", (e) => { if (e.target !== fileInput) fileInput.click(); });
+dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("dragover"); });
+dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+dropzone.addEventListener("drop", (e) => { e.preventDefault(); dropzone.classList.remove("dragover"); handleFiles([...e.dataTransfer.files]); });
+fileInput.addEventListener("change", (e) => handleFiles([...e.target.files]));
+
+// Paste ảnh Ctrl+V
+document.addEventListener("paste", (e) => {
+  if (!uploadModal.classList.contains("open")) return;
+  const items = [...(e.clipboardData?.items || [])];
+  const imgs = items.filter(i => i.type.startsWith("image/")).map(i => i.getAsFile());
+  if (imgs.length > 0) handleFiles(imgs);
+});
+
+function handleFiles(files) {
+  const imgs = files.filter(f => f.type.startsWith("image/"));
+  if (imgs.length === 0) return;
+  selectedFiles = [...selectedFiles, ...imgs];
+  renderPreviews();
+}
+
+function renderPreviews() {
+  previewGrid.innerHTML = "";
+  dzText.textContent = `Đã chọn ${selectedFiles.length} ảnh`;
+  selectedFiles.forEach((file, i) => {
+    const item = document.createElement("div");
+    item.className = "prev-item";
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    const rm = document.createElement("button");
+    rm.className = "prev-remove";
+    rm.textContent = "✕";
+    rm.onclick = (e) => {
+      e.stopPropagation();
+      selectedFiles.splice(i, 1);
+      renderPreviews();
+    };
+    item.appendChild(img); item.appendChild(rm);
+    previewGrid.appendChild(item);
+  });
+}
+
+// ── DO UPLOAD ──────────────────────────────────
+doUploadBtn.onclick = async () => {
+  if (selectedFiles.length === 0) { showUploadError("Chưa chọn ảnh nào 🥺"); return; }
+
+  doUploadBtn.disabled = true;
+  uploadError.style.display = "none";
+  progressWrap.style.display = "block";
+  progressText.style.display = "block";
+
+  const caption  = captionInput.value.trim();
+  const category = selectedCategory;
+  const newlyUploaded = [];
+
+  try {
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
+      progressText.textContent = `Đang upload ${i + 1}/${selectedFiles.length}...`;
+      progressBar.style.width = `${(i / selectedFiles.length) * 100}%`;
+
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("upload_preset", UPLOAD_PRESET);
+      fd.append("folder", FOLDER);
+
+      // Context: caption + category
+      let ctx = [];
+      if (caption)  ctx.push(`caption=${caption}`);
+      if (category) ctx.push(`category=${category}`);
+      if (ctx.length) fd.append("context", ctx.join("|"));
+
+      fd.append("tags", FOLDER);
+
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+        { method: "POST", body: fd }
+      );
+      const data = await res.json();
+      if (data.error) throw new Error(data.error.message);
+
+      // ✅ FIX CHÍNH: thêm ảnh mới vào đầu mảng photos ngay lập tức
+      newlyUploaded.push({
+        public_id:  data.public_id,
+        secure_url: data.secure_url,
+        created_at: data.created_at || new Date().toISOString(),
+        context: caption || category ? { caption, category } : undefined
+      });
+    }
+
+    progressBar.style.width = "100%";
+    progressText.textContent = `Hoàn thành ${newlyUploaded.length} ảnh! 💌`;
+
+    // ✅ Thêm ảnh mới vào đầu gallery NGAY LẬP TỨC, không cần reload
+    newlyUploaded.forEach(photo => {
+      photos.unshift(photo);
+    });
+
+    // Render ngay các card mới lên đầu gallery
+    newlyUploaded.forEach(photo => {
+      const index = photos.indexOf(photo);
+      const card = createCard(photo, index, true); // isNew=true → animation popIn
+      gallery.insertBefore(card, gallery.firstChild);
+    });
+
+    // Cập nhật số đếm + ẩn empty state
+    photoCount.textContent = `${photos.length} KHOẢNH KHẮC`;
+    emptyState.style.display = "none";
+
+    showToast(`Đã đăng ${newlyUploaded.length} ảnh thành công 💌`, false, true);
+
+    setTimeout(() => closeUploadModal(), 900);
+
+    // Background reload sau 5s để đồng bộ index Cloudinary
+    setTimeout(() => loadPhotos(), 5000);
+
+  } catch(err) {
+    console.error("Upload error:", err);
+    showUploadError("Upload lỗi: " + err.message);
+  } finally {
+    doUploadBtn.disabled = false;
+  }
+};
+
+function showUploadError(msg) {
+  uploadError.textContent = msg;
+  uploadError.style.display = "block";
+}
+
+// ── CATEGORY FILTER ───────────────────────────────
+function showCategoryFilter() {
+  // Create modal for category selection
+  const modalBg = document.createElement("div");
+  modalBg.className = "modal-bg";
+  modalBg.innerHTML = `
+    <div class="modal">
+      <button class="modal-close">✕</button>
+      <h2>Lọc theo danh mục</h2>
+      <p class="modal-sub">Chọn một hoặc nhiều danh mục để lọc</p>
+
+      <div class="field">
+        <label>Danh mục có sẵn</label>
+        <div class="cat-chips" id="filterCatChips">
+          <!-- Predefined categories -->
+          <span class="cat-chip" data-val="food">🍜 Thức ăn</span>
+          <span class="cat-chip" data-val="outing">🚶 Đi chơi</span>
+          <span class="cat-chip" data-val="study">📚 Học tập</span>
+          <span class="cat-chip" data-val="vibe">😭 Vô tri</span>
+          <span class="cat-chip" data-val="happy">🎉 Vui</span>
+          <span class="cat-chip" data-val="memory">💌 Kỷ niệm</span>
+          <span class="cat-chip" data-val="night">🌃 Ban đêm</span>
+          <span class="cat-chip" data-val="sunset">🌅 Hoàng hôn</span>
+          <span class="cat-chip" data-val="random">💤 Random</span>
+          <span class="cat-chip" data-val="uncategorized">📝 Chưa phân loại</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Danh mục tùy chỉnh</label>
+        <div class="cat-chips" id="customFilterCatChips">
+          <!-- Custom categories will be added here -->
+        </div>
+        <div class="custom-category-input">
+          <input type="text" id="newFilterCategory" placeholder="Nhập danh mục mới...">
+          <button type="button" id="addFilterCategoryBtn" class="material-icons">add</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelFilter">Thôi</button>
+        <button class="btn btn-primary" id="applyFilter">Áp dụng</button>
+        <button class="btn btn-secondary" id="clearFilter">Xóa lọc</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modalBg);
+
+  // Add custom categories to the checkboxes
+  const customFilterCatChips = modalBg.querySelector("#customFilterCatChips");
+  customCategories.forEach(cat => {
+    const chip = document.createElement("span");
+    chip.className = "cat-chip";
+    chip.dataset.val = cat;
+    chip.textContent = cat;
+    customFilterCatChips.appendChild(chip);
+  });
+
+  const cancelBtn = modalBg.querySelector("#cancelFilter");
+  const applyBtn = modalBg.querySelector("#applyFilter");
+  const clearBtn = modalBg.querySelector("#clearFilter");
+  const closeBtn = modalBg.querySelector(".modal-close");
+  const addCategoryBtn = modalBg.querySelector("#addFilterCategoryBtn");
+  const newCategoryInput = modalBg.querySelector("#newFilterCategory");
+
+  // Close modal
+  const closeModal = () => {
+    modalBg.remove();
+  };
+
+  cancelBtn.onclick = closeModal;
+  closeBtn.onclick = closeModal;
+  modalBg.addEventListener("click", (e) => {
+    if (e.target === modalBg) closeModal();
+  });
+
+  // Add custom category
+  addCategoryBtn.onclick = () => {
+    const newCat = newCategoryInput.value.trim();
+    if (newCat && !customCategories.includes(newCat)) {
+      customCategories.push(newCat);
+      localStorage.setItem("customCategories", JSON.stringify(customCategories));
+
+      // Add to chip list
+      const chip = document.createElement("span");
+      chip.className = "cat-chip";
+      chip.dataset.val = newCat;
+      chip.textContent = newCat;
+      customFilterCatChips.appendChild(chip);
+
+      newCategoryInput.value = "";
+    }
+  };
+
+  // Enter key to add category
+  newCategoryInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      addCategoryBtn.click();
+    }
+  });
+
+  // Category selection
+  const allCatChips = modalBg.querySelectorAll(".cat-chip");
+  allCatChips.forEach(chip => {
+    chip.addEventListener("click", () => {
+      chip.classList.toggle("active");
+    });
+  });
+
+  // Apply filter
+  applyBtn.onclick = () => {
+    const selectedCats = [];
+    allCatChips.forEach(chip => {
+      if (chip.classList.contains("active")) {
+        selectedCats.push(chip.dataset.val);
+      }
+    });
+
+    filterCategory = selectedCats.join(","); // Store as comma-separated string
+    renderGallery(); // Re-render with new filter
+    closeModal();
+
+    // Update button appearance
+    if (filterCategory) {
+      filterBtn.style.color = var(--accent);
+      filterBtn.style.background = var(--bg2);
+    } else {
+      filterBtn.style.color = '';
+      filterBtn.style.background = '';
+    }
+  };
+
+  // Clear filter
+  clearBtn.onclick = () => {
+    allCatChips.forEach(chip => chip.classList.remove("active"));
+    filterCategory = "";
+    renderGallery();
+    filterBtn.style.color = '';
+    filterBtn.style.background = '';
+  };
+
+  // Set initial state based on current filter
+  if (filterCategory) {
+    const currentCats = filterCategory.split(",");
+    allCatChips.forEach(chip => {
+      if (currentCats.includes(chip.dataset.val)) {
+        chip.classList.add("active");
+      }
+    });
+
+    // Style the button to show active filter
+    filterBtn.style.color = "var(--accent)";
+    filterBtn.style.background = "var(--bg2)";
+  }
+}
+
+// ── MULTI-SELECT ───────────────────────────────
+function togglePhotoSelection(publicId, checkboxElement) {
+  if (selectedPhotos.has(publicId)) {
+    selectedPhotos.delete(publicId);
+    checkboxElement.classList.remove("checked");
+  } else {
+    selectedPhotos.add(publicId);
+    checkboxElement.classList.add("checked");
+  }
+
+  // Update UI based on selection count
+  const selectedCount = selectedPhotos.size;
+  if (selectedCount > 0) {
+    // Show multi-select toolbar
+    showMultiSelectToolbar(selectedCount);
+    document.body.classList.add("multi-select-active");
+  } else {
+    // Hide multi-select toolbar
+    hideMultiSelectToolbar();
+    document.body.classList.remove("multi-select-active");
+  }
+
+  // Update individual checkbox states
+  document.querySelectorAll(".photo-checkbox").forEach(cb => {
+    const card = cb.closest(".photo-card");
+    if (card) {
+      const pid = card.dataset.publicId;
+      if (selectedPhotos.has(pid)) {
+        cb.classList.add("checked");
+      } else {
+        cb.classList.remove("checked");
+      }
+    }
+  });
+}
+
+function showMultiSelectToolbar(count) {
+  // Remove existing toolbar if any
+  const existingToolbar = document.querySelector(".multi-select-toolbar");
+  if (existingToolbar) existingToolbar.remove();
+
+  // Create toolbar
+  const toolbar = document.createElement("div");
+  toolbar.className = "multi-select-toolbar";
+  toolbar.innerHTML = `
+    <div style="padding: 12px 16px; background: var(--bg2); border-radius: 12px; display: flex; gap: 12px; align-items: center;">
+      <span>Đã chọn ${count} ảnh</span>
+      <button class="btn btn-secondary" id="editSelectedBtn">Chỉnh sửa</button>
+      <button class="btn btn-secondary" id="deleteSelectedBtn" style="background:#c0392b">Xóa</button>
+    </div>
+  `;
+
+  document.body.appendChild(toolbar);
+
+  // Position toolbar at bottom
+  toolbar.style.position = "fixed";
+  toolbar.style.bottom = "100px";
+  toolbar.style.left = "50%";
+  toolbar.style.transform = "translateX(-50%)";
+  toolbar.style.zIndex = "1000";
+
+  // Add event listeners
+  toolbar.querySelector("#editSelectedBtn").onclick = () => {
+    editSelectedPhotos();
+  };
+
+  toolbar.querySelector("#deleteSelectedBtn").onclick = () => {
+    deleteSelectedPhotos();
+  };
+}
+
+function hideMultiSelectToolbar() {
+  const toolbar = document.querySelector(".multi-select-toolbar");
+  if (toolbar) toolbar.remove();
+}
+
+function editSelectedPhotos() {
+  if (selectedPhotos.size === 0) return;
+
+  // For batch edit, we'll edit the first selected photo as a simple approach
+  // In a more advanced implementation, we could show a batch edit dialog
+  const firstId = Array.from(selectedPhotos)[0];
+  const photo = photos.find(p => p.public_id === firstId);
+  if (photo) {
+    const index = photos.findIndex(p => p.public_id === firstId);
+    openEditModal(firstId, index);
+  }
+
+  // Clear selection after editing
+  selectedPhotos.clear();
+  hideMultiSelectToolbar();
+  document.body.classList.remove("multi-select-active");
+  document.querySelectorAll(".photo-checkbox").forEach(cb => cb.classList.remove("checked"));
+}
+
+function deleteSelectedPhotos() {
+  if (selectedPhotos.size === 0) return;
+
+  if (!password) {
+    showToast("Nhập mật khẩu để xác nhận xóa", true);
+    return;
+  }
+
+  if (!window.confirm(`Bạn có chắc chắn muốn xóa ${selectedPhotos.size} ảnh này không?`)) {
+    return;
+  }
+
+  // Delete each selected photo
+  selectedPhotos.forEach(publicId => {
+    // Find index in photos array
+    const idx = photos.findIndex(p => p.public_id === publicId);
+    if (idx !== -1) {
+      // Remove from array
+      photos.splice(idx, 1);
+
+      // Remove from DOM
+      const cardEl = document.querySelector(`[data-public-id="${publicId}"]`);
+      if (cardEl) {
+        cardEl.style.transition = "opacity 0.3s, transform 0.3s";
+        cardEl.style.opacity = "0";
+        cardEl.style.transform = "scale(0.9)";
+        setTimeout(() => cardEl.remove(), 300);
+      }
+    }
+  });
+
+  // Update UI
+  photoCount.textContent = `${photos.length} KHOẢNH KHẮC`;
+  if (photos.length === 0) {
+    document.getElementById("emptyState").style.display = "block";
+  }
+
+  showToast(`Đã xóa ${selectedPhotos.size} ảnh`, false, true);
+
+  // Clear selection
+  selectedPhotos.clear();
+  hideMultiSelectToolbar();
+  document.body.classList.remove("multi-select-active");
+  document.querySelectorAll(".photo-checkbox").forEach(cb => cb.classList.remove("checked"));
+}
+
+// ── EDIT MODAL ───────────────────────────────
+function openEditModal(publicId, index) {
+  const photo = photos.find(p => p.public_id === publicId);
+  if (!photo) return;
+
+  // Create edit modal
+  const modalBg = document.createElement("div");
+  modalBg.className = "modal-bg";
+  modalBg.innerHTML = `
+    <div class="modal">
+      <button class="modal-close">✕</button>
+      <h2>Chỉnh sửa ảnh</h2>
+      <p class="modal-sub">Cập nhật thông tin cho ảnh này</p>
+
+      <div class="field">
+        <label>Caption</label>
+        <textarea id="editCaption" rows="2">${photo.context?.caption || ""}</textarea>
+      </div>
+
+      <div class="field">
+        <label>Danh mục</label>
+        <div class="edit-cat-chips" id="editCatChips">
+          <!-- Predefined categories -->
+          <span class="edit-cat-chip" data-val="food">🍜 Thức ăn</span>
+          <span class="edit-cat-chip" data-val="outing">🚶 Đi chơi</span>
+          <span class="edit-cat-chip" data-val="study">📚 Học tập</span>
+          <span class="edit-cat-chip" data-val="vibe">😭 Vô tri</span>
+          <span class="edit-cat-chip" data-val="happy">🎉 Vui</span>
+          <span class="edit-cat-chip" data-val="memory">💌 Kỷ niệm</span>
+          <span class="edit-cat-chip" data-val="night">🌃 Ban đêm</span>
+          <span class="edit-cat-chip" data-val="sunset">🌅 Hoàng hôn</span>
+          <span class="edit-cat-chip" data-val="random">💤 Random</span>
+          <span class="edit-cat-chip" data-val="uncategorized">📝 Chưa phân loại</span>
+        </div>
+        <div class="custom-category-input">
+          <input type="text" id="newEditCategory" placeholder="Nhập danh mục mới...">
+          <button type="button" id="addEditCategoryBtn" class="material-icons">add</button>
+        </div>
+      </div>
+
+      <div class="field memorial-date-input">
+        <label>Ngày kỉ niệm</label>
+        <input type="date" id="memorialDate" value="${photo.context?.memorialDate || ''}">
+        <button type="button" id="clearMemorialDate" class="material-icons">clear</button>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelEdit">Hủy</button>
+        <button class="btn btn-primary" id="saveEdit">Lưu thay đổi</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modalBg);
+
+  // Add custom categories to the checkboxes
+  const editCatChips = modalBg.querySelector("#editCatChips");
+  customCategories.forEach(cat => {
+    const chip = document.createElement("span");
+    chip.className = "edit-cat-chip";
+    chip.dataset.val = cat;
+    chip.textContent = cat;
+    editCatChips.appendChild(chip);
+  });
+
+  // Set initial state based on photo's categories
+  const photoCategories = photo.context?.category ?
+    (Array.isArray(photo.context.category) ? photo.context.category :
+     photo.context.category.split(",")) : [];
+
+  // Handle both string and array formats
+  const catArray = Array.isArray(photoCategories) ? photoCategories :
+                  (typeof photoCategories === 'string' ? [photoCategories] : []);
+
+  editCatChips.querySelectorAll(".edit-cat-chip").forEach(chip => {
+    if (catArray.includes(chip.dataset.val)) {
+      chip.classList.add("active");
+    }
+  });
+
+  // Also check custom categories
+  editCatChips.querySelectorAll(".edit-cat-chip").forEach(chip => {
+    if (customCategories.includes(chip.dataset.val) &&
+        catArray.includes(chip.dataset.val)) {
+      chip.classList.add("active");
+    }
+  });
+
+  const cancelBtn = modalBg.querySelector("#cancelEdit");
+  const saveBtn = modalBg.querySelector("#saveEdit");
+  const closeBtn = modalBg.querySelector(".modal-close");
+  const addCategoryBtn = modalBg.querySelector("#addEditCategoryBtn");
+  const newCategoryInput = modalBg.querySelector("#newEditCategory");
+  const memorialDateInput = modalBg.querySelector("#memorialDate");
+  const clearDateBtn = modalBg.querySelector("#clearMemorialDate");
+
+  // Close modal
+  const closeModal = () => {
+    modalBg.remove();
+  };
+
+  cancelBtn.onclick = closeModal;
+  closeBtn.onclick = closeModal;
+  modalBg.addEventListener("click", (e) => {
+    if (e.target === modalBg) closeModal();
+  });
+
+  // Clear memorial date
+  clearDateBtn.onclick = () => {
+    memorialDateInput.value = "";
+  };
+
+  // Add custom category
+  addCategoryBtn.onclick = () => {
+    const newCat = newCategoryInput.value.trim();
+    if (newCat && !customCategories.includes(newCat)) {
+      customCategories.push(newCat);
+      localStorage.setItem("customCategories", JSON.stringify(customCategories));
+
+      // Add to chip list
+      const chip = document.createElement("span");
+      chip.className = "edit-cat-chip";
+      chip.dataset.val = newCat;
+      chip.textContent = newCat;
+      editCatChips.appendChild(chip);
+
+      newCategoryInput.value = "";
+    }
+  };
+
+  // Enter key to add category
+  newCategoryInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      addCategoryBtn.click();
+    }
+  });
+
+  // Category selection
+  editCatChips.querySelectorAll(".edit-cat-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      chip.classList.toggle("active");
+    });
+  });
+
+  // Save changes
+  saveBtn.onclick = async () => {
+    const newCaption = document.getElementById("editCaption").value.trim();
+
+    // Get selected categories
+    const selectedCats = [];
+    editCatChips.querySelectorAll(".edit-cat-chip.active").forEach(chip => {
+      selectedCats.push(chip.dataset.val);
+    });
+
+    // Add custom categories
+    const customCatInputs = [];
+    customCategories.forEach(cat => {
+      if (selectedCats.includes(cat)) {
+        customCatInputs.push(cat);
+      }
+    });
+
+    const categoryString = selectedCats.length > 0 ? selectedCats.join(",") : "";
+    const memorialDate = document.getElementById("memorialDate").value;
+
+    try {
+      // Update photo in array
+      const photoIndex = photos.findIndex(p => p.public_id === publicId);
+      if (photoIndex !== -1) {
+        // Update context
+        photos[photoIndex].context = {
+          ...photos[photoIndex].context,
+          caption: newCaption,
+          category: categoryString,
+          memorialDate: memorialDate || undefined
+        };
+
+        // Update the card in DOM
+        const cardEl = document.querySelector(`[data-public-id="${publicId}"]`);
+        if (cardEl) {
+          // Recreate the card with updated data
+          const newCard = createCard(photos[photoIndex], photoIndex);
+          cardEl.parentNode.replaceChild(newCard, cardEl);
+        }
+
+        showToast("Đã lưu thay đổi", false, true);
+      }
+    } catch (err) {
+      console.error("Error saving edit:", err);
+      showToast("Lỗi khi lưu thay đổi", true);
+    } finally {
+      closeModal();
+    }
+  };
+
+  // Close on escape
+  document.addEventListener("keydown", function escListener(e) {
+    if (e.key === "Escape") {
+      closeModal();
+      document.removeEventListener("keydown", escListener);
+    }
+  });
+}
+
+// ── INFO TOOLTIP ───────────────────────────────
+function showInfoTooltip(photo, buttonElement) {
+  // Remove any existing tooltip
+  const existingTooltip = document.querySelector(".info-tooltip");
+  if (existingTooltip) existingTooltip.remove();
+
+  // Create tooltip
+  const tooltip = document.createElement("div");
+  tooltip.className = "info-tooltip";
+
+  const uploadDate = new Date(photo.created_at).toLocaleDateString("vi-VN", {
+    day: "2-digit", month: "2-digit", year: "numeric"
+  });
+
+  const memorialDate = photo.context?.memorialDate ?
+    new Date(photo.context.memorialDate).toLocaleDateString("vi-VN", {
+      day: "2-digit", month: "2-digit", year: "numeric"
+    }) : "Chưa đặt ngày kỉ niệm";
+
+  tooltip.innerHTML = `
+    <div><strong>Caption:</strong> ${photo.context?.caption || "Không có caption"}</div>
+    <div><strong>Ngày tải lên:</strong> ${uploadDate}</div>
+    <div><strong>Ngày kỉ niệm:</strong> ${memorialDate}</div>
+    <div><strong>Danh mục:</strong> ${photo.context?.category || "Chưa phân loại"}</div>
+  `;
+
+  document.body.appendChild(tooltip);
+
+  // Position tooltip relative to button
+  const buttonRect = buttonElement.getBoundingClientRect();
+  tooltip.style.left = `${buttonRect.left + window.scrollX}px`;
+  tooltip.style.top = `${buttonRect.bottom + window.scrollY + 8}px`;
+
+  // Remove tooltip when clicking outside
+  const removeTooltip = () => {
+    tooltip.remove();
+    document.removeEventListener("click", removeTooltip);
+  };
+
+  setTimeout(() => {
+    document.addEventListener("click", removeTooltip);
+  }, 100);
+}
+
+// ── MULTI-SELECT TOOLBAR ───────────────────────────────
+function showMultiSelectToolbar(count) {
+  // Remove existing toolbar if any
+  const existingToolbar = document.querySelector(".multi-select-toolbar");
+  if (existingToolbar) existingToolbar.remove();
+
+  // Create toolbar
+  const toolbar = document.createElement("div");
+  toolbar.className = "multi-select-toolbar";
+  toolbar.style.position = "fixed";
+  toolbar.style.bottom = "100px";
+  toolbar.style.left = "50%";
+  toolbar.style.transform = "translateX(-50%)";
+  toolbar.style.padding = "16px";
+  toolbar.style.display = "flex";
+  toolbar.style.gap = "12px";
+  toolbar.style.alignItems = "center";
+
+  toolbar.innerHTML = `
+    <span>Đã chọn ${count} ảnh</span>
+    <button class="btn btn-secondary" id="editSelectedBtn">Chỉnh sửa</button>
+    <button class="btn btn-secondary" id="deleteSelectedBtn" style="background:#c0392b; color:white;">Xóa</button>
+  `;
+
+  document.body.appendChild(toolbar);
+
+  // Add event listeners
+  document.getElementById("editSelectedBtn").onclick = () => {
+    if (selectedPhotos.size > 0) {
+      // For multiple selections, we'll edit the first one for simplicity
+      // In a full implementation, you might want a batch edit mode
+      const firstId = Array.from(selectedPhotos)[0];
+      const photoIndex = photos.findIndex(p => p.public_id === firstId);
+      if (photoIndex !== -1) {
+        openEditModal(firstId, photoIndex);
+      }
+    }
+  };
+
+  document.getElementById("deleteSelectedBtn").onclick = () => {
+    if (selectedPhotos.size > 0 && confirm(`Bạn có chắc chắn muốn xóa ${selectedPhotos.size} ảnh đã chọn?`)) {
+      const idsToDelete = Array.from(selectedPhotos);
+      deleteMultiplePhotos(idsToDelete);
+    }
+  };
+}
+
+function hideMultiSelectToolbar() {
+  const toolbar = document.querySelector(".multi-select-toolbar");
+  if (tooltip) toolbar.remove();
+}
+
+function deleteMultiplePhotos(photoIds) {
+  if (!password) {
+    showToast("Vui lòng nhập mật khẩu trước khi thực hiện thao tác này", true);
+    return;
+  }
+
+  Promise.all(
+    photoIds.map(id =>
+      fetch("/.netlify/functions/delete-photo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ public_id: id, password })
+      })
+    )
+  )
+  .then(responses => Promise.all(responses.map(r => r.json())))
+  .then(results => {
+    // Remove from photos array
+    photos = photos.filter(photo => !photoIds.includes(photo.public_id));
+
+    // Remove from DOM
+    photoIds.forEach(id => {
+      const cardEl = document.querySelector(`[data-public-id="${id}"]`);
+      if (cardEl) {
+        cardEl.style.transition = "opacity 0.3s, transform 0.3s";
+        cardEl.style.opacity = "0";
+        cardEl.style.transform = "scale(0.9)";
+        setTimeout(() => cardEl.remove(), 300);
+      }
+    });
+
+    // Clear selection
+    selectedPhotos.clear();
+    document.querySelectorAll(".photo-checkbox").forEach(cb => {
+      cb.classList.remove("checked");
+    });
+
+    // Update UI
+    photoCount.textContent = `${photos.length} KHOẢNH KHẮC`;
+    if (photos.length === 0) {
+      document.getElementById("emptyState").style.display = "block";
+    }
+
+    hideMultiSelectToolbar();
+    document.body.classList.remove("multi-select-active");
+
+    showToast(`Đã xóa ${photoIds.length} ảnh`, false, true);
+
+    // Reload from Cloudinary after delay
+    setTimeout(() => loadPhotos(), 5000);
+  })
+  .catch(err => {
+    console.error("Error deleting photos:", err);
+    showToast("Lỗi khi xóa ảnh", true);
+  });
+}
+
+// ── EDIT MODAL ───────────────────────────────
+function openEditModal(publicId, index) {
+  const photo = photos[index];
+
+  // Create modal
+  const modalBg = document.createElement("div");
+  modalBg.className = "modal-bg";
+  modalBg.innerHTML = `
+    <div class="modal">
+      <button class="modal-close">✕</button>
+      <h2>Chỉnh sửa ảnh</h2>
+      <p class="modal-sub">Cập nhật thông tin cho ảnh này</p>
+
+      <div class="edit-field">
+        <label>Caption</label>
+        <textarea id="editCaption" rows="3">${photo.context?.caption || ""}</textarea>
+      </div>
+
+      <div class="edit-field">
+        <label>Danh mục</label>
+        <div class="edit-cat-chips" id="editCatChips">
+          <!-- Predefined categories -->
+          <span class="edit-cat-chip" data-val="food">🍜 Thức ăn</span>
+          <span class="edit-cat-chip" data-val="outing">🚶 Đi chơi</span>
+          <span class="edit-cat-chip" data-val="study">📚 Học tập</span>
+          <span class="edit-cat-chip" data-val="vibe">😭 Vô tri</span>
+          <span class="edit-cat-chip" data-val="happy">🎉 Vui</span>
+          <span class="edit-cat-chip" data-val="memory">💌 Kỷ niệm</span>
+          <span class="edit-cat-chip" data-val="night">🌃 Ban đêm</span>
+          <span class="edit-cat-chip" data-val="sunset">🌅 Hoàng hôn</span>
+          <span class="edit-cat-chip" data-val="random">💤 Random</span>
+          <span class="edit-cat-chip" data-val="uncategorized">📝 Chưa phân loại</span>
+        </div>
+      </div>
+
+      <div class="edit-field">
+        <label>Danh mục tùy chỉnh</label>
+        <div class="edit-cat-chips" id="customEditCatChips">
+          <!-- Custom categories will be added here -->
+        </div>
+        <div class="custom-category-input">
+          <input type="text" id="newEditCategory" placeholder="Nhập danh mục mới...">
+          <button type="button" id="addEditCategoryBtn" class="material-icons">add</button>
+        </div>
+      </div>
+
+      <div class="edit-field">
+        <label>Ngày kỉ niệm (YYYY-MM-DD)</label>
+        <div class="memorial-date-input">
+          <input type="date" id="memorialDate" value="${photo.context?.memorialDate || ''}">
+          <button type="button" id="clearMemorialDate" class="material-icons">clear</button>
+          <button type="button" id="todayMemorialDate" class="material-icons">today</button>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelEdit">Thôi</button>
+        <button class="btn btn-primary" id="saveEdit">Lưu thay đổi</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modalBg);
+
+  // Get references
+  const modalClose = modalBg.querySelector(".modal-close");
+  const cancelEdit = modalBg.querySelector("#cancelEdit");
+  const saveEdit = modalBg.querySelector("#saveEdit");
+  const addCategoryBtn = modalBg.querySelector("#addEditCategoryBtn");
+  const newCategoryInput = modalBg.querySelector("#newEditCategory");
+  const clearMemorialDate = modalBg.querySelector("#clearMemorialDate");
+  const todayMemorialDate = modalBg.querySelector("#todayMemorialDate");
+  const editCatChips = modalBg.querySelector("#editCatChips");
+  const customEditCatChips = modalBg.querySelector("#customEditCatChips");
+
+  // Close modal
+  const closeModal = () => {
+    modalBg.remove();
+  };
+
+  modalClose.onclick = closeModal;
+  cancelEdit.onclick = closeModal;
+  modalBg.addEventListener("click", (e) => {
+    if (e.target === modalBg) closeModal();
+  });
+
+  // Clear memorial date
+  clearMemorialDate.onclick = () => {
+    document.getElementById("memorialDate").value = "";
+  };
+
+  // Set memorial date to today
+  todayMemorialDate.onclick = () => {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("memorialDate").value = today;
+  };
+
+  // Add custom category
+  addCategoryBtn.onclick = () => {
+    const newCat = newCategoryInput.value.trim();
+    if (newCat && !customCategories.includes(newCat)) {
+      customCategories.push(newCat);
+      localStorage.setItem("customCategories", JSON.stringify(customCategories));
+
+      // Add to chip list
+      const chip = document.createElement("span");
+      chip.className = "edit-cat-chip";
+      chip.dataset.val = newCat;
+      chip.textContent = newCat;
+      customEditCatChips.appendChild(chip);
+
+      newCategoryInput.value = "";
+    }
+  };
+
+  // Enter key to add category
+  newCategoryInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      addCategoryBtn.click();
+    }
+  });
+
+  // Add existing custom categories to the chip list
+  customCategories.forEach(cat => {
+    const chip = document.createElement("span");
+    chip.className = "edit-cat-chip";
+    chip.dataset.val = cat;
+    chip.textContent = cat;
+    customEditCatChips.appendChild(chip);
+  });
+
+  // Set initial state for predefined categories
+  const photoCats = photo.context?.category ?
+    (Array.isArray(photo.context.category) ?
+     photo.context.category :
+     photo.context.category.split(",")) : [];
+
+  // Mark selected predefined categories
+  editCatChips.querySelectorAll(".edit-cat-chip").forEach(chip => {
+    if (photoCats.includes(chip.dataset.val)) {
+      chip.classList.add("active");
+    }
+  });
+
+  // Mark selected custom categories
+  customEditCatChips.querySelectorAll(".edit-cat-chip").forEach(chip => {
+    if (photoCats.includes(chip.dataset.val)) {
+      chip.classList.add("active");
+    }
+  });
+
+  // Category selection - predefined
+  editCatChips.querySelectorAll(".edit-cat-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      chip.classList.toggle("active");
+    });
+  });
+
+  // Category selection - custom
+  customEditCatChips.querySelectorAll(".edit-cat-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      chip.classList.toggle("active");
+    });
+  });
+
+  // Save changes
+  saveEdit.onclick = async () => {
+    const newCaption = document.getElementById("editCaption").value.trim();
+
+    // Get selected categories
+    const selectedCats = [];
+    [...editCatChips.querySelectorAll(".edit-cat-chip.active"),
+     ...customEditCatChips.querySelectorAll(".edit-cat-chip.active")]
+      .forEach(chip => {
+        selectedCats.push(chip.dataset.val);
+      });
+
+    const categoryString = selectedCats.length > 0 ? selectedCats.join(",") : "";
+    const memorialDate = document.getElementById("memorialDate").value;
+
+    try {
+      // Update photo in array
+      const photoIndex = photos.findIndex(p => p.public_id === publicId);
+      if (photoIndex !== -1) {
+        // Update context
+        photos[photoIndex].context = {
+          ...photos[photoIndex].context,
+          caption: newCaption,
+          category: categoryString || undefined,
+          memorialDate: memorialDate || undefined
+        };
+
+        // Update the card in DOM
+        const cardEl = document.querySelector(`[data-public-id="${publicId}"]`);
+        if (cardEl) {
+          // Recreate the card with updated data
+          const newCard = createCard(photos[photoIndex], photoIndex);
+          cardEl.parentNode.replaceChild(newCard, cardEl);
+        }
+
+        showToast("Đã lưu thay đổi", false, true);
+      }
+    } catch (err) {
+      console.error("Error saving edit:", err);
+      showToast("Lỗi khi lưu thay đổi", true);
+    } finally {
+      closeModal();
+    }
+  };
+
+  // Close on escape
+  document.addEventListener("keydown", function escListener(e) {
+    if (e.key === "Escape") {
+      closeModal();
+      document.removeEventListener("keydown", escListener);
+    }
+  });
+}
+
+// ── UPDATED RENDER GALLERY WITH PRIORITIZATION ─────────────────────────────
+function renderGallery() {
+  // Filter by text search
+  let filtered = photos.filter(photo => {
+    const text = (photo.context?.caption ?? "").toLowerCase();
+    return text.includes(filterText.toLowerCase());
+  });
+
+  // Filter by category if specified
+  if (filterCategory) {
+    const filterCats = filterCategory.split(",");
+    filtered = filtered.filter(photo => {
+      const photoCats = photo.context?.category ?
+        (Array.isArray(photo.context.category) ? photo.context.category :
+         photo.context.category.split(",")) : [];
+      return filterCats.some(cat => photoCats.includes(cat));
+    });
+  }
+
+  // Sort by number of matching categories (descending) for priority display
+  if (filterCategory) {
+    const filterCats = filterCategory.split(",");
+    filtered.sort((a, b) => {
+      const aCats = a.context?.category ?
+        (Array.isArray(a.context.category) ? a.context.category :
+         a.context.category.split(",")) : [];
+      const bCats = b.context?.category ?
+        (Array.isArray(b.context.category) ? b.context.category :
+         b.context.category.split(",")) : [];
+
+      const aMatchCount = filterCats.filter(cat => aCats.includes(cat)).length;
+      const bMatchCount = filterCats.filter(cat => bCats.includes(cat)).length;
+
+      return bMatchCount - aMatchCount; // Descending order (more matches first)
+    });
+  }
+
+  gallery.innerHTML = "";
+  photoCount.textContent = `${filtered.length} KHOẢNH KHẮC`;
+  emptyState.style.display = filtered.length === 0 ? "block" : "none";
+
+  filtered.forEach((photo, index) => {
+    gallery.appendChild(createCard(photo, index));
+  });
+}
+
+// ── DELETE MODAL ───────────────────────────────
+function openDeleteModal(public_id) {
+  pendingDeleteId = public_id;
+  deleteError.style.display = "none";
+  deleteModal.classList.add("open");
+}
+
+document.getElementById("cancelDelete").onclick = () => {
+  deleteModal.classList.remove("open");
+  pendingDeleteId = null;
+};
+
+document.getElementById("confirmDelete").onclick = async () => {
+  if (!password) { deleteError.textContent = "Nhập mật khẩu đi nào 🔒"; deleteError.style.display = "block"; return; }
+  if (!pendingDeleteId) return;
+
+  const btn = document.getElementById("confirmDelete");
+  btn.disabled = true; btn.textContent = "Đang xóa...";
+  deleteError.style.display = "none";
+
+  try {
+    const res = await fetch("/.netlify/functions/delete-photo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ public_id: pendingDeleteId, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Xóa thất bại");
+
+    // ✅ Xóa khỏi mảng & DOM ngay lập tức
+    const idx = photos.findIndex(p => p.public_id === pendingDeleteId);
+    if (idx !== -1) photos.splice(idx, 1);
+    const cardEl = gallery.querySelector(`[data-public-id="${pendingDeleteId}"]`);
+    if (cardEl) {
+      cardEl.style.transition = "opacity 0.3s, transform 0.3s";
+      cardEl.style.opacity = "0";
+      cardEl.style.transform = "scale(0.9)";
+      setTimeout(() => cardEl.remove(), 300);
+    }
+
+    photoCount.textContent = `${photos.length} KHOẢNH KHẮC`;
+    if (photos.length === 0) emptyState.style.display = "block";
+
+    showToast("Đã xóa ảnh rồi 🗑️");
+    deleteModal.classList.remove("open");
+    pendingDeleteId = null;
+
+  } catch(err) {
+    deleteError.textContent = err.message;
+    deleteError.style.display = "block";
+  } finally {
+    btn.disabled = false; btn.textContent = "Xóa đi 🗑️";
+  }
+};
+
+// ── LIGHTBOX ───────────────────────────────────
+function openLightbox(index) {
+  lbIndex = index;
+  updateLightbox();
+  lightbox.classList.add("open");
+}
+
+function updateLightbox() {
+  const photo = photos[lbIndex];
+  lbImg.style.opacity = "0";
+  lbImg.src = getOptimizedUrl(photo.secure_url, 1400);
+  lbImg.onload = () => { lbImg.style.opacity = "1"; };
+  lbCaption.textContent = photo.context?.custom?.caption || "";
+  lbDate.textContent = new Date(photo.created_at).toLocaleDateString("vi-VN", { day:"2-digit", month:"2-digit", year:"numeric" });
+  lbPrev.style.display = lbIndex > 0 ? "flex" : "none";
+  lbNext.style.display = lbIndex < photos.length - 1 ? "flex" : "none";
+}
+
+lbClose.onclick = () => lightbox.classList.remove("open");
+lbPrev.onclick  = () => { if (lbIndex > 0) { lbIndex--; updateLightbox(); } };
+lbNext.onclick  = () => { if (lbIndex < photos.length - 1) { lbIndex++; updateLightbox(); } };
+
+// Keyboard
+document.addEventListener("keydown", (e) => {
+  if (!lightbox.classList.contains("open")) return;
+  if (e.key === "ArrowLeft")  lbPrev.click();
+  if (e.key === "ArrowRight") lbNext.click();
+  if (e.key === "Escape")     lightbox.classList.remove("open");
+});
+
+// Swipe lightbox trên mobile
+let touchStartX = 0;
+lightbox.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+lightbox.addEventListener("touchend",   (e) => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) { dx < 0 ? lbNext.click() : lbPrev.click(); }
+});
+
+// Close on backdrop
+uploadModal.addEventListener("click", (e) => { if (e.target === uploadModal) closeUploadModal(); });
+deleteModal.addEventListener("click", (e) => { if (e.target === deleteModal) deleteModal.classList.remove("open"); });
+lightbox.addEventListener("click",    (e) => { if (e.target === lightbox)    lightbox.classList.remove("open"); });
+
+// ── TOAST ──────────────────────────────────────
+function showToast(msg, error = false, success = false) {
+  toast.textContent = msg;
+  toast.className = "toast show" + (error ? " error" : success ? " success" : "");
+  setTimeout(() => { toast.className = "toast"; }, 3200);
+}
+</script>
+</body>
+</html>
