@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>🐧 Cánh Cụt & Gà Nhỏ 🐥</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #F3EBD8;
+      --bg2:    #EDE0C8;
+      --card:   #FDFAF3;
+      --text:   #1C0F06;
+      --muted:  #7A5C42;
+      --accent: #B8633A;
+      --accent2:#D4956A;
+      --border: #DFD0B8;
+      --white:  #FFFDF8;
+      --shadow: rgba(28,15,6,0.12);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:     #1A1208;
+        --bg2:    #231A0D;
+        --card:   #2A1E10;
+        --text:   #F0E6D3;
+        --muted:  #A8896B;
+        --accent: #D4844A;
+        --accent2:#E8A870;
+        --border: #3D2E1C;
+        --white:  #F8F0E3;
+        --shadow: rgba(0,0,0,0.35);
+      }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1000; opacity: 0.5;
+    }
+
+    /* ── LOGIN SCREEN ── */
+    #loginScreen {
+      position: fixed; inset: 0; z-index: 900;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      transition: opacity 0.5s ease;
+    }
+    #loginScreen.hidden { opacity: 0; pointer-events: none; }
+
+    .login-box {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%; max-width: 380px;
+      box-shadow: 0 24px 60px var(--shadow);
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .login-emoji { font-size: 2.8rem; margin-bottom: 12px; display: block; }
+    .login-box h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 400;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .login-box p {
+      font-style: italic; color: var(--muted);
+      font-size: 0.95rem; margin-bottom: 28px;
+    }
+    #loginInput {
+      width: 100%; padding: 13px 16px;
+      border: 2px solid var(--border);
+      border-radius: 8px; background: var(--bg);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; color: var(--text);
+      text-align: center; letter-spacing: 0.15em;
+      transition: border-color 0.2s, transform 0.1s;
+      margin-bottom: 12px;
+    }
+    #loginInput:focus { outline: none; border-color: var(--accent); }
+    #loginInput.shake {
+      animation: shake 0.4s ease;
+      border-color: #c0392b;
+    }
+    #loginError {
+      color: #c0392b; font-size: 0.88rem; font-style: italic;
+      min-height: 20px; margin-bottom: 8px;
+    }
+    #loginBtn {
+      width: 100%; padding: 13px;
+      background: var(--accent); color: white;
+      border: none; border-radius: 8px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.05em;
+    }
+    #loginBtn:hover { background: #9f5230; }
+    #loginBtn:active { transform: scale(0.98); }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-5px); }
+      80%      { transform: translateX(5px); }
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 56px 24px 36px;
+      position: relative;
+    }
+    .header-line {
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      margin-bottom: 8px;
+    }
+    .header-line::before, .header-line::after {
+      content: ''; height: 1px; width: 80px;
+      background: linear-gradient(90deg, transparent, var(--accent));
+    }
+    .header-line::after { background: linear-gradient(90deg, var(--accent), transparent); }
+    .header-emoji { font-size: 1.4rem; }
+
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 400; letter-spacing: 0.01em;
+      color: var(--text); line-height: 1.1;
+    }
+    h1 em { font-style: italic; color: var(--accent); }
+    .subtitle {
+      margin-top: 10px; font-size: 1rem;
+      color: var(--muted); font-style: italic; letter-spacing: 0.05em;
+    }
+    .photo-count {
+      margin-top: 6px; font-size: 0.8rem;
+      color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase;
+    }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px;
+      padding: 0 40px; margin-bottom: 32px;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .divider span { color: var(--accent); font-size: 1rem; }
+
+    /* ── GALLERY ── */
+    .gallery-wrap { padding: 0 20px 140px; max-width: 1400px; margin: 0 auto; }
+
+    .gallery { columns: 4; column-gap: 14px; }
+    @media (max-width: 1100px) { .gallery { columns: 3; } }
+    @media (max-width: 700px)  { .gallery { columns: 2; column-gap: 10px; } }
+    @media (max-width: 400px)  { .gallery { columns: 2; column-gap: 8px; } }
+
+    .photo-card {
+      break-inside: avoid; margin-bottom: 14px;
+      position: relative; border-radius: 8px;
+      overflow: hidden; cursor: pointer;
+      background: var(--card);
+      box-shadow: 0 2px 12px var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .photo-card.new-card {
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.88); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .photo-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px var(--shadow); }
+.photo-card.selected { border: 2px solid var(--accent); box-shadow: 0 0 0 3px rgba(184,99,58,0.2); }
+
+    .photo-card img {
+      width: 100%; display: block;
+      transition: filter 0.3s ease;
+      /* Skeleton while loading */
+      min-height: 60px;
+      background: var(--bg2);
+    }
+    .photo-card:hover img { filter: brightness(0.88); }
+
+    /* Skeleton shimmer */
+    .photo-card img.loading-img {
+      background: linear-gradient(90deg, var(--bg2) 25%, var(--border) 50%, var(--bg2) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(28,15,6,0.75) 0%, transparent 55%);
+      opacity: 0; transition: opacity 0.3s ease;
+      display: flex; align-items: flex-end; padding: 14px;
+    }
+    .photo-card:hover .card-overlay { opacity: 1; }
+    /* Always show on mobile */
+    @media (hover: none) { .card-overlay { opacity: 1; } }
+
+    .card-caption { color: #fff; font-size: 0.88rem; font-style: italic; line-height: 1.4; }
+    .card-date { font-size: 0.72rem; color: rgba(255,255,255,0.6); margin-top: 2px; letter-spacing: 0.05em; }
+
+    .btn-delete {
+      position: absolute; top: 8px; right: 8px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(28,15,6,0.6); border: none;
+      color: white; font-size: 0.7rem; cursor: pointer;
+      opacity: 0; transition: opacity 0.2s;
+      display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    .photo-card:hover .btn-delete { opacity: 1; }
+    @media (hover: none) { .btn-delete { opacity: 0.8; } }
+    .btn-delete:hover { background: #c0392b; }
+
+    .btn-edit {
+      position: absolute; top: 8px; right: 40px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(28,15,6,0.6); border: none;
+      color: white; font-size: 0.7rem; cursor: pointer;
+      opacity: 0; transition: opacity 0.2s;
+      display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    .photo-card:hover .btn-edit { opacity: 1; }
+    @media (hover: none) { .btn-edit { opacity: 0.8; } }
+    .btn-edit:hover { background: #c0392b; }
+
+    .fav-btn {
+      position: absolute; top: 8px; left: 8px;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(28,15,6,0.5); border: none;
+      color: white; font-size: 0.8rem; cursor: pointer;
+      opacity: 0; transition: opacity 0.2s, transform 0.15s;
+      display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    .photo-card:hover .fav-btn { opacity: 1; }
+    @media (hover: none) { .fav-btn { opacity: 0.8; } }
+    .fav-btn.active { color: #e74c3c; }
+    .fav-btn:active { transform: scale(1.3); }
+
+    /* ── EMPTY / LOADING ── */
+    .empty { text-align: center; padding: 80px 20px; color: var(--muted); }
+    .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+    .empty h2 {
+      font-family: 'Playfair Display', serif; font-size: 1.6rem;
+      font-weight: 400; margin-bottom: 8px; color: var(--text);
+    }
+    .empty p { font-style: italic; }
+
+    .loading { text-align: center; padding: 80px 20px; color: var(--muted); }
+    .spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--border); border-top-color: var(--accent);
+      animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── FAB ── */
+    .fab {
+      position: fixed; bottom: 32px; right: 32px;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--accent); color: var(--white);
+      border: none; cursor: pointer; font-size: 1.6rem;
+      box-shadow: 0 6px 24px rgba(184,99,58,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 100; display: flex; align-items: center; justify-content: center;
+    }
+    .fab:hover { transform: scale(1.1); box-shadow: 0 10px 32px rgba(184,99,58,0.6); }
+    .fab:active { transform: scale(0.95); }
+    @media (max-width: 600px) { .fab { bottom: 24px; right: 20px; width: 54px; height: 54px; } }
+
+    /* ── MODAL BASE ── */
+    .modal-bg {
+      position: fixed; inset: 0;
+      background: rgba(28,15,6,0.6);
+      backdrop-filter: blur(5px);
+      z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-bg.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 14px; padding: 36px;
+      width: 100%; max-width: 460px;
+      box-shadow: 0 24px 60px rgba(28,15,6,0.3);
+      transform: translateY(24px);
+      transition: transform 0.3s ease;
+      position: relative;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-bg.open .modal { transform: translateY(0); }
+
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem; font-weight: 400;
+      margin-bottom: 5px; color: var(--text);
+    }
+    .modal .modal-sub { font-style: italic; color: var(--muted); font-size: 0.93rem; margin-bottom: 22px; }
+
+    .field { margin-bottom: 14px; }
+    .field label {
+      display: block; font-size: 0.78rem; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted); margin-bottom: 5px;
+    }
+    .field input, .field textarea, .field select {
+      width: 100%; padding: 10px 14px;
+      border: 1.5px solid var(--border); border-radius: 7px;
+      background: var(--bg); font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: var(--text);
+      transition: border-color 0.2s; resize: vertical;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none; border-color: var(--accent);
+    }
+
+    /* Category chips */
+    .cat-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .cat-chip {
+      padding: 5px 12px; border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--bg); color: var(--muted);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.88rem; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .cat-chip:hover { border-color: var(--accent2); color: var(--accent); }
+    .cat-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+    /* Dropzone */
+    .dropzone {
+      border: 2px dashed var(--border); border-radius: 10px;
+      padding: 26px 20px; text-align: center; cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      color: var(--muted); font-style: italic;
+      background: var(--bg); position: relative;
+    }
+    .dropzone:hover, .dropzone.dragover { border-color: var(--accent); background: var(--bg2); }
+    .dropzone .dz-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+    .dropzone input { position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px; }
+
+    .preview-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 12px;
+    }
+    .preview-grid .prev-item { position: relative; aspect-ratio: 1/1; }
+    .preview-grid img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 5px;
+    }
+    .prev-remove {
+      position: absolute; top: 3px; right: 3px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(0,0,0,0.65); color: white;
+      border: none; font-size: 0.6rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Progress */
+    .progress-bar-wrap {
+      height: 5px; background: var(--border); border-radius: 5px;
+      margin: 12px 0; overflow: hidden; display: none;
+    }
+    .progress-bar {
+      height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 5px; transition: width 0.3s ease; width: 0%;
+    }
+    .progress-text {
+      text-align: center; font-size: 0.84rem; color: var(--muted);
+      font-style: italic; margin-bottom: 12px; display: none;
+    }
+
+    .error-msg {
+      color: #c0392b; font-size: 0.88rem; text-align: center;
+      margin-bottom: 10px; font-style: italic; display: none;
+    }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+    .btn {
+      flex: 1; padding: 12px;
+      border-radius: 7px; border: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.03em;
+    }
+    .btn-primary { background: var(--accent); color: white; }
+    .btn-primary:hover { background: #9f5230; }
+    .btn-primary:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+    .btn-secondary { background: var(--bg); color: var(--muted); border: 1.5px solid var(--border); }
+    .btn-secondary:hover { background: var(--bg2); }
+    .btn-secondary.active { background: var(--accent); color: white; }
+    .btn-icon {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close {
+      position: absolute; top: 14px; right: 14px;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.1rem; color: var(--muted);
+      width: 28px; height: 28px; display: flex;
+      align-items: center; justify-content: center;
+      border-radius: 50%; transition: background 0.2s;
+    }
+    .modal-close:hover { background: var(--bg2); }
+
+    /* Delete modal */
+    .delete-modal .modal { max-width: 360px; text-align: center; }
+    .delete-modal .modal h2 { font-size: 1.3rem; margin-bottom: 8px; }
+    .delete-modal .modal p { color: var(--muted); font-style: italic; margin-bottom: 18px; }
+
+    /* ── LIGHTBOX ── */
+    .lightbox-bg {
+      position: fixed; inset: 0;
+      background: rgba(8,4,2,0.94);
+      backdrop-filter: blur(8px);
+      z-index: 300;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .lightbox-bg.open { opacity: 1; pointer-events: all; }
+
+    .lightbox {
+      max-width: 90vw; max-height: 90vh;
+      position: relative;
+      display: flex; flex-direction: column; align-items: center;
+      user-select: none;
+    }
+    .lightbox img {
+      max-width: 90vw; max-height: 80vh;
+      object-fit: contain; border-radius: 4px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transition: opacity 0.2s ease;
+    }
+    .lightbox-caption {
+      color: rgba(255,255,255,0.85); font-style: italic;
+      font-size: 1rem; margin-top: 14px; text-align: center; max-width: 600px;
+    }
+    .lightbox-date { color: rgba(255,255,255,0.38); font-size: 0.78rem; margin-top: 4px; letter-spacing: 0.08em; }
+
+    .lb-close {
+      position: fixed; top: 18px; right: 22px;
+      background: rgba(255,255,255,0.12); border: none;
+      color: rgba(255,255,255,0.8); font-size: 1.4rem;
+      width: 40px; height: 40px; border-radius: 50%;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .lb-close:hover { background: rgba(255,255,255,0.22); }
+
+    .lb-nav {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.12); border: none; color: white;
+      font-size: 1.4rem; width: 44px; height: 44px; border-radius: 50%;
+      cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .lb-nav:hover { background: rgba(255,255,255,0.25); }
+    .lb-prev { left: 14px; } .lb-next { right: 14px; }
+    @media (max-width: 600px) {
+      .lb-prev { left: 6px; } .lb-next { right: 6px; }
+      .lb-nav { width: 36px; height: 36px; font-size: 1.1rem; }
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 110px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text); color: var(--white);
+      padding: 11px 24px; border-radius: 40px;
+      font-size: 0.88rem; z-index: 500;
+      opacity: 0; transition: all 0.3s;
+      pointer-events: none; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: #c0392b; }
+    .toast.success { background: #27ae60; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* Batch Toolbar */
+    .batch-toolbar {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+      z-index: 1000;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .batch-toolbar.visible {
+      transform: translateY(0);
+    }
+
+    .batch-toolbar-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .batch-toolbar-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    @media (max-width: 600px) {
+      .batch-toolbar {
+        padding: 10px 15px;
+      }
+
+      .batch-toolbar-content {
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .batch-toolbar-actions {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+  /* File Status Indicators for Upload */
+  .file-status {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    z-index: 10;
+    text-align: center;
+    min-width: 60px;
+  }
+
+  .file-status.uploading {
+    background-color: #f39c12;
+    color: white;
+  }
+
+  .file-status.success {
+    background-color: #27ae60;
+    color: white;
+  }
+
+  .file-status.error {
+    background-color: #e74c3c;
+    color: white;
+  }
+
+  .file-status.aborted {
+    background-color: #95a5a6;
+    color: white;
+  }
+
+  .file-status.queued {
+    background-color: #bdc3c7;
+    color: white;
+  }
+
+  .retry-btn {
+  background: rgba(28,15,6,0.5) !important;
+  border: none !important;
+  color: white !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0.6rem !important;
+  height: 16px !important;
+  width: 16px !important;
+  line-height: 16px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+}
+
+.retry-btn:hover {
+  background: rgba(28,15,6,0.6) !important;
+}
+
+  .preview-item img {
+    transition: opacity 0.3s ease;
+  }
+
+  .preview-item img.uploading {
+    opacity: 0.7;
+  }
+
+  .preview-item img.success {
+    opacity: 1;
+  }
+
+  .preview-item img.error {
+    opacity: 0.5;
+  }
+  .search-bar {
+  margin: 20px 0;
+  text-align: center;
+}
+.search-bar input {
+  width: 250px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--text);
+  transition: border-color 0.2s;
+}
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Filter Dropdown Styles */
+.filter-dropdown {
+  position: absolute;
+  top: 100px; /* Position below the header/search area */
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px var(--shadow);
+  width: 90%;
+  max-width: 400px;
+  max-height: 500px;
+  overflow-y: auto;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -10px);
+  transition: all 0.25s ease;
+  border: 1.5px solid var(--border);
+}
+
+.filter-dropdown.open {
+  opacity: 1;
+  pointer-events: all;
+  transform: translate(-50%, 0);
+}
+
+.filter-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-header h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.25rem;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-body {
+  padding: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.filter-footer {
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .filter-dropdown {
+    width: 95%;
+    top: 80px;
+  }
+
+  .filter-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filter-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .filter-footer {
+    flex-direction: column;
+  }
+
+  .filter-footer button {
+    width: 100%;
+  }
+}
+
+/* Edit Mode Styles */
+.edit-mode .card-overlay {
+  background: rgba(28,15,6,0.9);
+}
+
+.edit-container {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.edit-mode .field {
+  margin-bottom: 16px;
+}
+
+.edit-mode .field label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* Selection Action Styles */
+.selection-actions {
+  display: none;
+  gap: 8px;
+  margin-left: 12px;
+  vertical-align: middle;
+}
+
+.selection-mode-active .selection-actions {
+  display: inline-flex;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: var(--accent2);
+  color: white;
+}
+
+/* Fix for selection mode - hide action buttons on cards */
+.selection-mode .photo-card .fav-btn,
+.selection-mode .photo-card .btn-delete,
+.selection-mode .photo-card .btn-edit {
+  display: none !important;
+}
+
+/* Hover effect in selection mode - subtle zoom */
+.selection-mode .photo-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+.selection-mode .photo-card:hover img {
+  filter: none !important;
+}
+
+.edit-mode .field input,
+.edit-mode .field textarea,
+.edit-mode .field select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem;
+  color: var(--text);
+  transition: border-color 0.2s;
+}
+
+.edit-mode .field input:focus,
+.edit-mode .field textarea:focus,
+.edit-mode .field select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.edit-mode .field textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.edit-mode .edit-cat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.edit-mode .cat-chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--muted);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.edit-mode .cat-chip:hover {
+  border-color: var(--accent2);
+  color: var(--accent);
+}
+
+.edit-mode .cat-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.edit-mode .edit-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: flex-end;
+}
+
+.edit-mode .btn-sm {
+  padding: 10px 16px;
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments for edit mode */
+@media (max-width: 480px) {
+  .edit-container {
+    margin: 0 10px;
+    padding: 15px;
+  }
+
+  .edit-mode .field input,
+  .edit-mode .field textarea,
+  .edit-mode .field select {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+  }
+
+  .edit-mode .btn-sm {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+}
+\n#batchToolbar {\n  display: none;\n}\n\n.search-bar {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  justify-content: center;\n  flex-wrap: wrap;\n  margin: 20px 0;\n}\n\n.search-bar input {\n  flex: 1;\n  min-width: 200px;\n  width: auto;\n}\n\n.selection-mode-toggle {\n  display: inline-flex;\n  align-items: center;\n  gap: 4px;\n}\n</style>\n
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <span class="login-emoji">🐧🐥</span>
+    <h2>Cánh Cụt & Gà Nhỏ</h2>
+    <p>nhập mật khẩu để vào album nha~</p>
+    <input type="password" id="loginInput" placeholder="••••••••" autocomplete="current-password">
+    <div id="loginError">&nbsp;</div>
+    <button id="loginBtn">Vào album 💌</button>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div id="app" style="display:none">
+
+<header>
+  <div class="header-line">
+    <span class="header-emoji">🐧</span>
+    <span class="header-emoji">🐥</span>
+  </div>
+  <h1>Cánh Cụt <em>&</em> Gà Nhỏ</h1>
+  <p class="subtitle">những khoảnh khắc nhỏ xinh của chúng mình 🤍</p>
+  <p class="photo-count" id="photoCount"></p>
+</header>
+
+<div class="divider"><span>✦</span></div>
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Tìm kiếm theo caption, danh mục, ngày...">
+  <button id="filterBtn" class="btn btn-secondary">🔍 Lọc theo danh mục</button>
+  <div class="selection-mode-toggle">
+    <button id="selectionModeBtn" class="btn btn-secondary">Chọn nhiều</button>
+    <div id="selectionActions" class="selection-actions">
+      <button id="btnEditSelected" class="btn btn-icon btn-secondary" title="Sửa nhiều">
+        ✎
+      </button>
+      <button id="btnDownloadSelected" class="btn btn-icon btn-secondary" title="Tải xuống">
+        ⬇️
+      </button>
+      <button id="btnDeleteSelected" class="btn btn-icon btn-secondary" title="Xóa">
+        🗑️
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Batch Toolbar (hidden by default) -->
+<div id="filterDropdown" class="filter-dropdown">
+  <div class="filter-header">
+    <h3>Lọc theo danh mục</h3>
+    <div class="filter-actions">
+      <button id="selectAllBtn" class="btn btn-secondary btn-sm">Chọn tất cả</button>
+      <button id="clearAllBtn" class="btn btn-secondary btn-sm">Bỏ chọn tất cả</button>
+    </div>
+  </div>
+  <div class="filter-body">
+    <div class="cat-chips" id="filterCatChips">
+      <!-- Categories will be populated here -->
+    </div>
+  </div>
+  <div class="filter-footer">
+    <button id="applyFilterBtn" class="btn btn-primary">Áp dụng</button>
+    <button id="cancelFilterBtn" class="btn btn-secondary">Hủy</button>
+  </div>
+</div>
+
+<div class="gallery-wrap">
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Đang tải ảnh lên nào...</p>
+  </div>
+  <div id="emptyState" class="empty" style="display:none">
+    <div class="empty-icon">📷</div>
+    <h2>Chưa có ảnh nào cả</h2>
+    <p>Nhấn nút 🐧 bên dưới để đăng ảnh đầu tiên nhé!</p>
+  </div>
+  <div class="gallery" id="gallery"></div>
+</div>
+
+<button class="fab" id="fabBtn" title="Đăng ảnh mới">🐧</button>
+
+</div><!-- /#app -->
+
+<!-- ── UPLOAD MODAL ── -->
+<div class="modal-bg" id="uploadModal">
+  <div class="modal">
+    <button class="modal-close" id="closeUpload">✕</button>
+    <h2>Đăng ảnh mới 📸</h2>
+    <p class="modal-sub">chỉ hai đứa mình thôi nhé~</p>
+
+    <div class="field">
+      <label>Chọn ảnh</label>
+      <div class="dropzone" id="dropzone">
+        <span class="dz-icon">🖼️</span>
+        <span id="dzText">Nhấn để chọn hoặc kéo thả ảnh vào đây</span>
+        <div class="preview-grid" id="previewGrid"></div>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Caption (không bắt buộc)</label>
+      <textarea id="captionInput" rows="2" placeholder="Hôm nay hai đứa mình..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Category</label>
+      <div class="cat-chips" id="catChips">
+        <span class="cat-chip" data-val="food">🍜 Thức ăn</span>
+        <span class="cat-chip" data-val="outing">🚶 Đi chơi</span>
+        <span class="cat-chip" data-val="study">📚 Học tập</span>
+        <span class="cat-chip" data-val="vibe">😭 Vô tri</span>
+        <span class="cat-chip" data-val="happy">🎉 Vui</span>
+        <span class="cat-chip" data-val="memory">💌 Kỷ niệm</span>
+        <span class="cat-chip" data-val="night">🌃 Ban đêm</span>
+        <span class="cat-chip" data-val="sunset">🌅 Hoàng hôn</span>
+        <span class="cat-chip" data-val="random">💤 Random</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Date (YYYY-MM-DD)</label>
+      <input type="text" id="dateInput" class="date-input date-picker" placeholder="YYYY-MM-DD">
+    </div>
+
+
+    <div class="progress-bar-wrap" id="progressWrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText"></div>
+    <div class="error-msg" id="uploadError"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelUpload">Thôi</button>
+      <button class="btn btn-primary" id="doUpload">Đăng lên 💌</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── DELETE MODAL ── -->
+<div class="modal-bg delete-modal" id="deleteModal">
+  <div class="modal">
+    <h2>Xóa ảnh này? 🥺</h2>
+    <div class="delete-preview">
+      <img id="deletePreviewImg" src="" alt="Preview">
+      <div class="delete-info">
+        <p id="deleteCaption" class="delete-caption"></p>
+        <p id="deleteDate" class="delete-date"></p>
+      </div>
+    </div>
+    <div class="field">
+      <label>Nhập mật khẩu để xác nhận</label>
+      <input type="password" id="deletePasswordInput" placeholder="••••••••">
+    </div>
+    <div class="error-msg" id="deleteError"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelDelete">Thôi</button>
+      <button class="btn btn-primary" id="confirmDelete">Xóa đi 🗑️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EDIT MODAL ── -->
+<div class="modal-bg" id="editModal">
+  <div class="modal">
+    <button class="modal-close" id="closeEdit">✕</button>
+    <h2>Chỉnh sửa ảnh ✎</h2>
+    <p class="modal-sub">cập nhật thông tin ảnh này</p>
+
+    <div class="field">
+      <label>Caption</label>
+      <textarea id="editCaption" rows="3" placeholder="Mô tả về ảnh này..."></textarea>
+    </div>
+
+    <div class="field">
+      <label>Category</label>
+      <div class="cat-chips" id="editCatChips">
+        <span class="cat-chip" data-val="food">🍜 Thức ăn</span>
+        <span class="cat-chip" data-val="outing">🚶 Đi chơi</span>
+        <span class="cat-chip" data-val="study">📚 Học tập</span>
+        <span class="cat-chip" data-val="vibe">😭 Vô tri</span>
+        <span class="cat-chip" data-val="happy">🎉 Vui</span>
+        <span class="cat-chip" data-val="memory">💌 Kỷ niệm</span>
+        <span class="cat-chip" data-val="night">🌃 Ban đêm</span>
+        <span class="cat-chip" data-val="sunset">🌅 Hoàng hôn</span>
+        <span class="cat-chip" data-val="random">💤 Random</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Date (YYYY-MM-DD)</label>
+      <input type="text" id="editDate" class="date-input date-picker" placeholder="YYYY-MM-DD">
+    </div>
+
+    <div class="field">
+      <label>Favorite</label>
+      <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+        <input type="checkbox" id="editFavorite">
+        <label for="editFavorite" style="font-weight: normal; margin: 0; text-transform: none; letter-spacing: 0;">Yêu thích</label>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelEdit">Hủy</button>
+      <button class="btn btn-primary" id="saveEdit">Lưu thay đổi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox-bg" id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-nav lb-prev" id="lbPrev">‹</button>
+  <button class="lb-nav lb-next" id="lbNext">›</button>
+  <div class="lightbox">
+    <img id="lbImg" src="" alt="">
+    <div class="lightbox-caption" id="lbCaption"></div>
+    <div class="lightbox-date" id="lbDate"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+// ⚙️  CẤU HÌNH — thay đổi các giá trị này
+// =============================================
+const CLOUD_NAME    = "dzuzeuzmv";
+const UPLOAD_PRESET = "album_upload";
+const FOLDER        = "album";
+const SESSION_KEY   = "album_auth";
+// =============================================
+
+// Category label map
+const CAT_LABELS = {
+  food:"🍜 Thức ăn", outing:"🚶 Đi chơi", study:"📚 Học tập",
+  vibe:"😭 Vô tri", happy:"🎉 Vui", memory:"💌 Kỷ niệm",
+  night:"🌃 Ban đêm", sunset:"🌅 Hoàng hôn", random:"💤 Random"
+};
+
+let photos     = [];
+let lbIndex    = 0;
+let pendingDeleteId = null;
+let selectedFiles   = [];
+let selectedCategory = "";
+let favorites  = JSON.parse(localStorage.getItem("fav_ids") || "[]");
+let filterText = "";
+let selectedPhotos = new Set(); // Track selected photo IDs for batch operations
+let isSelectionMode = false; // Track if we're in selection mode
+
+// ── DOM refs ──
+const loginScreen  = document.getElementById("loginScreen");
+const loginInput   = document.getElementById("loginInput");
+const loginBtn     = document.getElementById("loginBtn");
+const loginError   = document.getElementById("loginError");
+const appEl        = document.getElementById("app");
+const gallery      = document.getElementById("gallery");
+const loadingEl    = document.getElementById("loading");
+const emptyState   = document.getElementById("emptyState");
+const photoCount   = document.getElementById("photoCount");
+const fabBtn       = document.getElementById("fabBtn");
+const uploadModal  = document.getElementById("uploadModal");
+const deleteModal  = document.getElementById("deleteModal");
+const dropzone     = document.getElementById("dropzone");
+const fileInput    = document.getElementById("fileInput");
+const previewGrid  = document.getElementById("previewGrid");
+const dzText       = document.getElementById("dzText");
+const captionInput = document.getElementById("captionInput");
+  const dateInput    = document.getElementById("dateInput");
+const doUploadBtn  = document.getElementById("doUpload");
+const progressWrap = document.getElementById("progressWrap");
+const progressBar  = document.getElementById("progressBar");
+const progressText = document.getElementById("progressText");
+const uploadError  = document.getElementById("uploadError");
+const lightbox     = document.getElementById("lightbox");
+const lbImg        = document.getElementById("lbImg");
+const lbCaption    = document.getElementById("lbCaption");
+const lbDate       = document.getElementById("lbDate");
+const lbClose      = document.getElementById("lbClose");
+const lbPrev       = document.getElementById("lbPrev");
+const lbNext       = document.getElementById("lbNext");
+const toast        = document.getElementById("toast");
+const deleteError  = document.getElementById("deleteError");
+const deletePassInput = document.getElementById("deletePasswordInput");
+const searchInput = document.getElementById("searchInput");
+// Batch operation elements
+const selectedCountSpan = document.getElementById("selectedCount");
+const batchToolbar = document.getElementById("batchToolbar");
+const btnDeleteSelected = document.getElementById("btnDeleteSelected");
+const btnEditSelected = document.getElementById("btnEditSelected");
+const btnDownloadSelected = document.getElementById("btnDownloadSelected");
+const selectionModeBtn = document.getElementById("selectionModeBtn");
+searchInput.addEventListener("input", (e) => {
+  filterText = e.target.value;
+  renderGallery();
+});
+
+// ── LOGIN ──────────────────────────────────────
+function checkAuth() {
+  const stored = sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY);
+  return stored === "1";
+}
+
+function doLogin() {
+  const val = loginInput.value;
+  // Kiểm tra qua Netlify Function (gửi password lên server validate)
+  // Để không lộ password trong source, ta validate gián tiếp bằng cách thử delete một ảnh giả
+  // Hoặc đơn giản hơn: dùng hash
+  // Ở đây ta hash SHA-256 phía client rồi so sánh với hash cứng
+  // Hash SHA-256 của password bạn — đổi lại cho đúng!
+  // Để tạo hash: https://emn178.github.io/online-tools/sha256.html
+  const PASS_HASH = "e88d630e876f725bdf988d4d28a467f0e395a38bd0d03343152052ab8af02d86"; // ← thay hash SHA-256 password của bạn vào đây
+
+  crypto.subtle.digest("SHA-256", new TextEncoder().encode(val)).then(buf => {
+    const hash = Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    if (hash === PASS_HASH) {
+      // Nếu chưa set hash, tạm thời bypass để dev (xóa điều kiện thứ 2 khi dùng thật)
+      sessionStorage.setItem(SESSION_KEY, "1");
+      loginScreen.classList.add("hidden");
+      setTimeout(() => { loginScreen.style.display = "none"; }, 500);
+      appEl.style.display = "block";
+      loadPhotos();
+    } else {
+      loginInput.classList.add("shake");
+      loginError.textContent = "Sai mật khẩu rồi 🔒";
+      setTimeout(() => loginInput.classList.remove("shake"), 500);
+    }
+  });
+}
+
+loginBtn.onclick = doLogin;
+loginInput.onkeydown = (e) => { if (e.key === "Enter") doLogin(); };
+
+if (checkAuth()) {
+  loginScreen.style.display = "none";
+  appEl.style.display = "block";
+  loadPhotos();
+}
+
+// ── LOAD PHOTOS ────────────────────────────────
+async function loadPhotos() {
+  loadingEl.style.display = "block";
+  gallery.innerHTML = "";
+  try {
+    const res = await fetch("/api/get-photos");
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    photos = data.resources || [];
+    renderGallery();
+  } catch(err) {
+    console.error("loadPhotos:", err);
+    showToast("Không tải được ảnh 😢", true);
+  } finally {
+    loadingEl.style.display = "none";
+  }
+}
+
+// ── RENDER GALLERY ─────────────────────────────
+function renderGallery() {
+  const filtered = photos.filter(photo => {
+    const text = (photo.context?.caption ?? "").toLowerCase();
+    return text.includes(filterText.toLowerCase());
+  });
+  gallery.innerHTML = "";
+  photoCount.textContent = `${filtered.length} KHOẢNH KHẮC`;
+  emptyState.style.display = filtered.length === 0 ? "block" : "none";
+
+  filtered.forEach((photo, index) => {
+    gallery.appendChild(createCard(photo, index));
+  });
+}
+
+function createCard(photo, index, isNew = false, isEditMode = false) {
+  const card = document.createElement("div");
+  card.className = "photo-card" + (isNew ? " new-card" : "") + (isEditMode ? " edit-mode" : "");
+  card.dataset.publicId = photo.public_id;
+
+  const caption  = photo.context?.caption || "";
+  const date     = new Date(photo.created_at).toLocaleDateString("vi-VN");
+  const isFav    = favorites.includes(photo.public_id);
+  const category = photo.context?.category || "";
+
+  // Dùng Cloudinary transformation để resize tự động
+  const thumbUrl = getOptimizedUrl(photo.secure_url, 600);
+
+  if (isEditMode) {
+    // Edit mode
+    card.innerHTML = `
+      <img src="${thumbUrl}" loading="lazy" alt="${caption}" class="loading-img">
+      <div class="card-overlay">
+        <div class="edit-container">
+          <div class="field">
+            <label>Caption</label>
+            <textarea class="edit-caption">${caption}</textarea>
+          </div>
+          <div class="field">
+            <label>Category</label>
+            <div class="cat-chips edit-cat-chips">
+              <!-- Categories will be populated here -->
+            </div>
+          </div>
+          <div class="field">
+            <label>Date</label>
+            <input type="date" class="edit-date" value="${photo.created_at.split('T')[0]}">
+          </div>
+          <div class="edit-actions">
+            <button class="btn btn-sm btn-secondary" id="cancelEdit-${photo.public_id}">Hủy</button>
+            <button class="btn btn-sm btn-primary" id="saveEdit-${photo.public_id}">Lưu</button>
+          </div>
+        </div>
+      </div>
+      <button class="fav-btn${isFav ? " active" : ""}" title="Yêu thích">${isFav ? "❤️" : "🤍"}</button>
+      <button class="btn-delete" title="Xóa ảnh">✕</button>
+    `;
+  } else {
+    // View mode
+    const categoryCats = photo.context && photo.context.category ? photo.context.category.split('|').filter(Boolean) : [];
+    const categoryHtml = categoryCats.length > 0 ? `<div class="card-categories">${categoryCats.map(cat => `<span class="cat-chip-small">${CAT_LABELS[cat] || cat}</span>`).join('')}</div>` : '';
+    card.innerHTML = `
+      <img src="${thumbUrl}" loading="lazy" alt="${caption}" class="loading-img">
+      <div class="card-overlay">
+        <div>
+          <div class="card-caption">${caption || "✨"}</div>
+          <div class="card-date">${date}</div>
+          ${categoryHtml}
+        </div>
+      </div>
+      <button class="fav-btn${isFav ? " active" : ""}" title="Yêu thích">${isFav ? "❤️" : "🤍"}</button>
+      <button class="btn-delete" title="Xóa ảnh">✕</button>
+      <button class="btn-edit" title="Chỉnh sửa">✎</button>
+    `;
+  }
+
+  const img = card.querySelector("img");
+  img.onload = () => img.classList.remove("loading-img");
+  img.onerror = () => img.classList.remove("loading-img");
+
+  img.addEventListener("click", (e) => {
+    if (card.classList.contains('edit-mode')) return;
+    if (isSelectionMode) {
+      // Toggle selection when in selection mode
+      const isSelected = selectedPhotos.has(photo.public_id);
+      if (isSelected) {
+        selectedPhotos.delete(photo.public_id);
+        card.classList.remove("selected");
+      } else {
+        selectedPhotos.add(photo.public_id);
+        card.classList.add("selected");
+      }
+      updateSelectionUI();
+    } else {
+      // Normal behavior: open lightbox
+      openLightbox(photos.indexOf(photo));
+    }
+  });
+  card.querySelector(".card-overlay").addEventListener("click", (e) => {
+    if (card.classList.contains('edit-mode')) return;
+    if (isSelectionMode) {
+      // Toggle selection when in selection mode
+      const isSelected = selectedPhotos.has(photo.public_id);
+      if (isSelected) {
+        selectedPhotos.delete(photo.public_id);
+        card.classList.remove("selected");
+      } else {
+        selectedPhotos.add(photo.public_id);
+        card.classList.add("selected");
+      }
+      updateSelectionUI();
+    } else {
+      // Normal behavior: open lightbox
+      openLightbox(photos.indexOf(photo));
+    }
+  });
+
+  if (!isEditMode) {
+    // View mode event listeners
+    card.querySelector(".fav-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      toggleFav(photo.public_id, card.querySelector(".fav-btn"));
+    });
+
+    card.querySelector(".btn-delete").addEventListener("click", (e) => {
+      e.stopPropagation();
+      openDeleteModal(photo.public_id);
+    });
+
+    card.querySelector(".btn-edit").addEventListener("click", (e) => {
+      e.stopPropagation();
+      // Switch to edit mode
+      const cardElement = e.target.closest(".photo-card");
+      const publicId = cardElement.dataset.publicId;
+      const photoData = photos.find(p => p.public_id === publicId);
+      if (photoData) {
+        // Find the card in the gallery and recreate it in edit mode
+        const index = Array.from(gallery.children).findIndex(c => c.dataset.publicId === publicId);
+        if (index >= 0) {
+          gallery.replaceChild(createCard(photoData, index, false, true), cardElement);
+          // Re-attach event listeners for the new edit mode card
+          attachEditModeListeners(photoData, index);
+        }
+      }
+    });
+  } else {
+    // Edit mode event listeners will be attached separately
+    // We'll handle this in a separate function to avoid duplication
+  }
+
+  return card;
+}
+
+// Attach event listeners for edit mode controls
+function attachEditModeListeners(photo, index) {
+  const card = document.querySelector(`.photo-card[data-public-id="${photo.public_id}"]`);
+  if (!card) return;
+
+  // Populate category chips
+  const catChipsContainer = card.querySelector(".edit-cat-chips");
+  if (catChipsContainer) {
+    catChipsContainer.innerHTML = "";
+    const currentCategories = photo.context && photo.context.category ? photo.context.category.split('|').filter(Boolean) : [];
+    Object.keys(CAT_LABELS).forEach(catValue => {
+      const catLabel = CAT_LABELS[catValue];
+      const chip = document.createElement("span");
+      chip.className = "cat-chip";
+      chip.dataset.val = catValue;
+      chip.textContent = catLabel;
+
+      // Check if this category is already selected
+      if (currentCategories.includes(catValue)) {
+        chip.classList.add("active");
+      }
+
+      chip.addEventListener("click", () => {
+        chip.classList.toggle("active");
+      });
+
+      catChipsContainer.appendChild(chip);
+    });
+  }
+
+  // Cancel edit button
+  const cancelBtn = card.querySelector(`#cancelEdit-${photo.public_id}`);
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", () => {
+      // Revert to view mode
+      const cardElement = document.querySelector(`.photo-card[data-public-id="${photo.public_id}"]`);
+      if (cardElement) {
+        const index = Array.from(gallery.children).findIndex(c => c.dataset.publicId === photo.public_id);
+        if (index >= 0) {
+          gallery.replaceChild(createCard(photo, index, false, false), cardElement);
+          // Re-attach event listeners for the view mode card
+          // Note: The event listeners are attached in the createCard function for view mode
+        }
+      }
+    });
+  }
+
+  // Save edit button
+  const saveBtn = card.querySelector(`#saveEdit-${photo.public_id}`);
+  if (saveBtn) {
+    saveBtn.addEventListener("click", async () => {
+      const cardElement = document.querySelector(`.photo-card[data-public-id="${photo.public_id}"]`);
+      if (!cardElement) return;
+
+      // Get form values
+      const captionInput = cardElement.querySelector(".edit-caption");
+      const dateInput = cardElement.querySelector(".edit-date");
+      const selectedCatChips = Array.from(cardElement.querySelectorAll(".edit-cat-chips .cat-chip.active"));
+
+      const newCaption = captionInput ? captionInput.value.trim() : "";
+      const newDate = dateInput ? dateInput.value : "";
+      // Get selected categories (multiple)
+      const newCategory = selectedCatChips.map(chip => chip.dataset.val).filter(Boolean).join('|');
+
+      // Validate
+      if (!newDate) {
+        showToast("Vui lòng chọn ngày", true);
+        return;
+      }
+
+      // Update photo object
+      if (!photo.context) photo.context = {};
+      photo.context.caption = newCaption;
+      if (newCategory) {
+        photo.context.category = newCategory;
+      } else if (photo.context.category) {
+        delete photo.context.category;
+      }
+
+      // Update via Netlify function
+      try {
+        const res = await fetch("/api/update-metadata", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            public_id: photo.public_id,
+            caption: newCaption,
+            category: newCategory || undefined,
+            date: newDate
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Cập nhật thất bại");
+
+        // Update photo.created_at if date changed
+        if (newDate) {
+          photo.created_at = newDate + "T00:00:00Z"; // Assuming time is not important
+        }
+
+        showToast("Đã lưu thay đổi", false, true);
+
+        // Return to view mode
+        const index = Array.from(gallery.children).findIndex(c => c.dataset.publicId === photo.public_id);
+        if (index >= 0) {
+          gallery.replaceChild(createCard(photo, index, false, false), cardElement);
+          // Re-attach event listeners for the view mode card
+          // The createCard function will attach the view mode listeners
+        }
+
+        // Re-render gallery to reflect changes in sorting/filtering
+        renderGallery();
+      } catch (err) {
+        showToast("Lỗi: " + err.message, true);
+      }
+    });
+  }
+}
+
+// Cloudinary auto-optimize URL
+function getOptimizedUrl(url, w) {
+  return url.replace("/upload/", `/upload/w_${w},f_auto,q_auto/`);
+}
+
+// ── FAVORITE ───────────────────────────────────
+function toggleFav(public_id, btn) {
+  const idx = favorites.indexOf(public_id);
+  if (idx === -1) {
+    favorites.push(public_id);
+    btn.textContent = "❤️"; btn.classList.add("active");
+  } else {
+    favorites.splice(idx, 1);
+    btn.textContent = "🤍"; btn.classList.remove("active");
+  }
+  localStorage.setItem("fav_ids", JSON.stringify(favorites));
+}
+
+// ── CATEGORY CHIPS (Upload Modal) ─────────────────────────────
+const uploadCatChips = document.querySelectorAll("#catChips .cat-chip");
+let selectedCategoriesSet = new Set(); // for upload modal
+
+uploadCatChips.forEach(chip => {
+  chip.addEventListener("click", () => {
+    const value = chip.dataset.val;
+    if (selectedCategoriesSet.has(value)) {
+      selectedCategoriesSet.delete(value);
+      chip.classList.remove("active");
+    } else {
+      selectedCategoriesSet.add(value);
+      chip.classList.add("active");
+    }
+  });
+});
+
+// ── UPLOAD MODAL ───────────────────────────────
+fabBtn.onclick = () => uploadModal.classList.add("open");
+document.getElementById("cancelUpload").onclick = closeUploadModal;
+document.getElementById("closeUpload").onclick  = closeUploadModal;
+
+function closeUploadModal() {
+  uploadModal.classList.remove("open");
+  selectedFiles = []; selectedCategoriesSet.clear();
+  fileInput.value = ""; previewGrid.innerHTML = "";
+  captionInput.value = "";
+  uploadError.style.display = "none";
+  progressWrap.style.display = "none";
+  progressText.style.display = "none";
+  progressBar.style.width = "0%";
+  dzText.textContent = "Nhấn để chọn hoặc kéo thả ảnh vào đây";
+  document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
+  dateInput.value = "";
+}
+
+// Dropzone
+dropzone.addEventListener("click", (e) => { if (e.target !== fileInput) fileInput.click(); });
+dropzone.addEventListener("dragover", (e) => { e.preventDefault(); dropzone.classList.add("dragover"); });
+dropzone.addEventListener("dragleave", () => dropzone.classList.remove("dragover"));
+dropzone.addEventListener("drop", (e) => { e.preventDefault(); dropzone.classList.remove("dragover"); handleFiles([...e.dataTransfer.files]); });
+fileInput.addEventListener("change", (e) => handleFiles([...e.target.files]));
+
+// Paste ảnh Ctrl+V
+document.addEventListener("paste", (e) => {
+  if (!uploadModal.classList.contains("open")) return;
+  const items = [...(e.clipboardData?.items || [])];
+  const imgs = items.filter(i => i.type.startsWith("image/")).map(i => i.getAsFile());
+  if (imgs.length > 0) handleFiles(imgs);
+});
+
+function handleFiles(files) {
+  const imgs = files.filter(f => f.type.startsWith("image/"));
+  if (imgs.length === 0) return;
+  selectedFiles = [...selectedFiles, ...imgs];
+  renderPreviews();
+}
+
+function renderPreviews() {
+  previewGrid.innerHTML = "";
+  dzText.textContent = `Đã chọn ${selectedFiles.length} ảnh`;
+  selectedFiles.forEach((file, i) => {
+    const item = document.createElement("div");
+    item.className = "prev-item";
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    const rm = document.createElement("button");
+    rm.className = "prev-remove";
+    rm.textContent = "✕";
+    rm.onclick = (e) => {
+      e.stopPropagation();
+      selectedFiles.splice(i, 1);
+      renderPreviews();
+    };
+    item.appendChild(img); item.appendChild(rm);
+    previewGrid.appendChild(item);
+  });
+}
+
+// Enhanced upload with abort controller, per-file tracking, and retry capability
+let abortControllers = new Map(); // Map file to its abort controller
+let fileStatuses = new Map(); // Track status of each file: queue, uploading, success, error
+
+doUploadBtn.onclick = async () => {
+  if (selectedFiles.length === 0) { showUploadError("Chưa chọn ảnh nào 🥺"); return; }
+
+  // Reset tracking for this upload session
+  abortControllers.clear();
+  selectedFiles.forEach((file, index) => fileStatuses.set(index, 'queued'));
+
+  // UI updates
+  doUploadBtn.disabled = true;
+  uploadError.style.display = "none";
+  progressWrap.style.display = "block";
+  progressText.style.display = "block";
+
+  // Show cancel button during upload
+  const cancelUploadBtn = document.createElement('button');
+  cancelUploadBtn.textContent = "Hủy";
+  cancelUploadBtn.className = "btn btn-sm btn-secondary";
+  cancelUploadBtn.style.marginLeft = "10px";
+  doUploadBtn.parentNode.insertBefore(cancelUploadBtn, doUploadBtn.nextSibling);
+
+  const caption  = captionInput.value.trim();
+  const category = Array.from(selectedCategoriesSet).join('|');
+  const date     = dateInput ? dateInput.value : "";
+  const newlyUploaded = [];
+  const failedFiles = [];
+
+  try {
+    // Get indices of files that are queued for upload
+    const indicesToUpload = [];
+    for (let i = 0; i < selectedFiles.length; i++) {
+      if (fileStatuses.get(i) === 'queued') {
+        indicesToUpload.push(i);
+      }
+    }
+
+    // Process only the queued files
+    for (let idx of indicesToUpload) {
+      // Check if aborted (allowing cancel during batch)
+      if (fileStatuses.get(idx) === 'aborted') break;
+
+      const file = selectedFiles[idx];
+      fileStatuses.set(idx, 'uploading');
+
+      // Update UI for this file
+      updateFileStatusUI(idx, 'uploading', `Đang upload ${idx + 1}/${selectedFiles.length}...`);
+      progressBar.style.width = `${(idx / selectedFiles.length) * 100}%`;
+
+      // Create abort controller for this file
+      const abortController = new AbortController();
+      abortControllers.set(file, abortController);
+
+      try {
+        const fd = new FormData();
+        fd.append("file", file);
+        fd.append("upload_preset", UPLOAD_PRESET);
+        fd.append("folder", FOLDER);
+
+        // Context: caption + category + date
+        let ctx = [];
+        if (caption)  ctx.push(`caption=${caption}`);
+        if (category) ctx.push(`category=${category}`);
+        if (date)     ctx.push(`date=${date}`);
+        if (ctx.length) fd.append("context", ctx.join("|"));
+
+        fd.append("tags", FOLDER);
+
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+          {
+            method: "POST",
+            body: fd,
+            signal: abortController.signal // Enable abort
+          }
+        );
+
+        if (res.status === 400) {
+          const errorData = await res.json();
+          throw new Error(errorData.error?.message || "Lỗi upload");
+        }
+
+        const data = await res.json();
+        if (data.error) throw new Error(data.error.message);
+
+        // Success
+        fileStatuses.set(idx, 'success');
+        updateFileStatusUI(idx, 'success', "Hoàn thành");
+
+        newlyUploaded.push({
+          public_id:  data.public_id,
+          secure_url: data.secure_url,
+          created_at: data.created_at || new Date().toISOString(),
+          context: caption || category ? { caption, category } : undefined
+        });
+
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          fileStatuses.set(idx, 'aborted');
+          updateFileStatusUI(idx, 'aborted', "Đã hủy");
+          continue; // Skip to next file if aborted
+        }
+
+        fileStatuses.set(idx, 'error');
+        updateFileStatusUI(idx, 'error', `Lỗi: ${err.message}`);
+        failedFiles.push({ index: idx, file, error: err.message });
+      }
+    }
+
+    // Handle abort
+    if (Array.from(fileStatuses.values()).includes('aborted')) {
+      progressText.textContent = "Upload đã bị hủy";
+      showToast("Upload đã bị hủy bởi người dùng", false);
+      // Cleanup and close modal
+      setTimeout(() => {
+        closeUploadModal();
+      }, 1500);
+      return;
+    }
+
+    // Update progress
+    progressBar.style.width = "100%";
+    progressText.textContent = `Hoàn thành ${newlyUploaded.length} ảnh! ${failedFiles.length} lỗi 💌`;
+
+    // Add successful uploads to gallery
+    if (newlyUploaded.length > 0) {
+      newlyUploaded.forEach(photo => {
+        photos.unshift(photo);
+      });
+
+      newlyUploaded.forEach(photo => {
+        const index = photos.indexOf(photo);
+        const card = createCard(photo, index, true); // isNew=true → animation popIn
+        gallery.insertBefore(card, gallery.firstChild);
+      });
+
+      // Update count and hide empty state
+      photoCount.textContent = `${photos.length} KHOẢNH KHẮC`;
+      emptyState.style.display = "none";
+
+      showToast(`Đã đăng ${newlyUploaded.length} ảnh thành công 💌`, false, true);
+    }
+
+    // Show errors if any
+    if (failedFiles.length > 0) {
+      showUploadError(`${failedFiles.length} file không thể upload. Kiểm tra lại và thử lại.`);
+      // Enable retry buttons for failed files
+      failedFiles.forEach(item => {
+        updateFileStatusUI(item.index, 'error', `Lỗi: ${item.error} (Nhấn để thử lại)`);
+      });
+    }
+
+    setTimeout(() => closeUploadModal(), 1500);
+
+    // Background reload sau 5s để đồng bộ index Cloudinary
+    setTimeout(() => loadPhotos(), 5000);
+
+  } catch(err) {
+    console.error("Upload error:", err);
+    showUploadError("Upload lỗi: " + err.message);
+    // Cleanup and close modal on error
+    setTimeout(() => {
+      closeUploadModal();
+    }, 1500);
+  } finally {
+    // Cleanup
+    doUploadBtn.disabled = false;
+    if (cancelUploadBtn && cancelUploadBtn.parentNode) {
+      cancelUploadBtn.remove();
+    }
+    // Clean up abort controllers
+    abortControllers.clear();
+  }
+};
+
+// Update file status UI in preview grid
+function updateFileStatusUI(index, status, message) {
+  const previewItem = document.querySelectorAll('#previewGrid .prev-item')[index];
+  if (!previewItem) return;
+
+  // Remove existing status indicators
+  previewItem.querySelectorAll('.file-status, .retry-btn').forEach(el => el.remove());
+
+  // Add status indicator
+  const statusEl = document.createElement('div');
+  statusEl.className = `file-status ${status}`;
+  statusEl.textContent = message;
+
+  // Style based on status
+  switch(status) {
+    case 'success':
+      statusEl.style.backgroundColor = '#27ae60';
+      statusEl.style.color = 'white';
+      break;
+    case 'error':
+      statusEl.style.backgroundColor = '#e74c3c';
+      statusEl.style.color = 'white';
+      // Add retry button
+      const retryBtn = document.createElement('button');
+      retryBtn.textContent = "Thử lại";
+      retryBtn.className = 'btn btn-sm btn-secondary retry-btn';
+      retryBtn.onclick = () => retryFileUpload(index);
+      statusEl.appendChild(retryBtn);
+      break;
+    case 'aborted':
+      statusEl.style.backgroundColor = '#95a5a6';
+      statusEl.style.color = 'white';
+      break;
+    case 'uploading':
+      statusEl.style.backgroundColor = '#f39c12';
+      statusEl.style.color = 'white';
+      break;
+    default:
+      statusEl.style.backgroundColor = '#bdc3c7';
+      statusEl.style.color = 'white';
+  }
+
+  // Position the status
+  const img = previewItem.querySelector('img');
+  if (img) {
+    img.style.opacity = status === 'success' ? '1' : '0.7';
+    statusEl.style.position = 'absolute';
+    statusEl.style.top = '5px';
+    statusEl.style.right = '5px';
+    statusEl.style.padding = '2px 6px';
+    statusEl.style.borderRadius = '3px';
+    statusEl.style.fontSize = '0.7rem';
+    statusEl.style.zIndex = '10';
+    previewItem.style.position = 'relative';
+    previewItem.appendChild(statusEl);
+  }
+}
+
+// Retry failed file upload
+async function retryFileUpload(index) {
+  const file = selectedFiles[index];
+  if (!file) return;
+
+  // Set status to queued so it gets picked up in next upload batch
+  fileStatuses.set(index, 'queued');
+  updateFileStatusUI(index, 'queued', 'Chờ trong hàng đợi...');
+}
+
+// Helper function to show error toast
+function showErrorToast(msg) {
+  toast.textContent = msg;
+  toast.className = "toast show error";
+  setTimeout(() => { toast.className = "toast"; }, 3200);
+}
+
+// Enhanced validation
+function validateFile(file) {
+  const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+  const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return `File tipo không được hỗ trợ: ${file.type}. Chỉ chấp nhận JPG, PNG, GIF, WEBP.`;
+  }
+
+  if (file.size > MAX_SIZE) {
+    return `File quá lớn: ${(file.size / (1024*1024)).toFixed(2)}MB. Giới hạn là 10MB.`;
+  }
+
+  return null; // Valid
+}
+
+// Enhanced file input handler with validation
+fileInput.addEventListener("change", (e) => {
+  const files = Array.from(e.target.files);
+  const validFiles = [];
+  const errors = [];
+
+  files.forEach((file, index) => {
+    const error = validateFile(file);
+    if (error) {
+      errors.push(`${file.name}: ${error}`);
+    } else {
+      validFiles.push(file);
+    }
+  });
+
+  if (errors.length > 0) {
+    showUploadError(errors.join('\n'));
+    // Clear invalid files
+    e.target.value = '';
+    return;
+  }
+
+  // Add valid files to selection
+  selectedFiles = [...selectedFiles, ...validFiles];
+  renderPreviews();
+});
+
+// Enhanced dropzone handler with validation
+dropzone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropzone.classList.remove("dragover");
+
+  const files = Array.from(e.dataTransfer.files);
+  const validFiles = [];
+  const errors = [];
+
+  files.forEach((file, index) => {
+    const error = validateFile(file);
+    if (error) {
+      errors.push(`${file.name}: ${error}`);
+    } else {
+      validFiles.push(file);
+    }
+  });
+
+  if (errors.length > 0) {
+    showUploadError(errors.join('\n'));
+    return;
+  }
+
+  // Add valid files to selection
+  selectedFiles = [...selectedFiles, ...validFiles];
+  renderPreviews();
+});
+
+function showUploadError(msg) {
+  uploadError.textContent = msg;
+  uploadError.style.display = "block";
+}
+
+// Update selection UI
+function updateSelectionUI() {
+  const count = selectedPhotos.size;
+  if (selectedCountSpan) {
+    selectedCountSpan.textContent = `${count} ảnh được chọn`;
+  }
+
+  // Update individual card selections
+  document.querySelectorAll('.photo-card').forEach(card => {
+    const publicId = card.dataset.publicId;
+    const isSelected = selectedPhotos.has(publicId);
+    if (isSelected) {
+      card.classList.add('selected');
+    } else {
+      card.classList.remove('selected');
+    }
+  });
+
+  // Show/hide batch toolbar
+  toggleBatchToolbar();
+}
+
+// Toggle batch toolbar visibility
+function toggleBatchToolbar() {
+  if (batchToolbar) {
+    if (selectedPhotos.size > 0 && isSelectionMode) {
+      batchToolbar.classList.add('visible');
+    } else {
+      batchToolbar.classList.remove('visible');
+    }
+  }
+}
+
+// ── DELETE MODAL ───────────────────────────────
+function openDeleteModal(public_id) {
+  pendingDeleteId = public_id;
+
+  // Find the photo data
+  const photo = photos.find(p => p.public_id === public_id);
+  if (photo) {
+    // Populate preview
+    const deletePreviewImg = document.getElementById("deletePreviewImg");
+    const deleteCaption = document.getElementById("deleteCaption");
+    const deleteDate = document.getElementById("deleteDate");
+
+    // Set thumbnail
+    deletePreviewImg.src = getOptimizedUrl(photo.secure_url, 300);
+    deletePreviewImg.alt = photo.context?.caption || "Preview";
+
+    // Set caption
+    deleteCaption.textContent = photo.context?.caption || "Không có mô tả";
+
+    // Set date
+    const date = new Date(photo.created_at).toLocaleDateString("vi-VN");
+    deleteDate.textContent = date;
+  }
+
+  // Clear password input and error
+  document.getElementById("deletePasswordInput").value = "";
+  deleteError.style.display = "none";
+
+  deleteModal.classList.add("open");
+}
+
+document.getElementById("cancelDelete").onclick = () => {
+  deleteModal.classList.remove("open");
+  pendingDeleteId = null;
+};
+
+document.getElementById("confirmDelete").onclick = async () => {
+  const passwordInput = document.getElementById("deletePasswordInput");
+  const password = passwordInput.value;
+
+  if (!password) {
+    deleteError.textContent = "Nhập mật khẩu đi nào 🔒";
+    deleteError.style.display = "block";
+    passwordInput.focus();
+    return;
+  }
+
+  if (!pendingDeleteId) return;
+
+  const btn = document.getElementById("confirmDelete");
+  btn.disabled = true;
+  btn.textContent = "Đang xóa...";
+
+  // Add loading state to modal
+  deleteModal.classList.add("deleting");
+
+  deleteError.style.display = "none";
+
+  try {
+    const res = await fetch("/api/delete-photo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ public_id: pendingDeleteId, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Xóa thất bại");
+
+    // ✅ Xóa khỏi mảng & DOM ngay lập tức với animation
+    const idx = photos.findIndex(p => p.public_id === pendingDeleteId);
+    if (idx !== -1) {
+      // Get the card element for animation
+      const cardEl = gallery.querySelector(`[data-public-id="${pendingDeleteId}"]`);
+      if (cardEl) {
+        // Add animation classes for smooth removal
+        cardEl.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+        cardEl.style.opacity = "0";
+        cardEl.style.transform = "scale(0.95)";
+
+        // Remove after animation completes
+        setTimeout(() => {
+          if (cardEl.parentNode) {
+            cardEl.remove();
+          }
+          // Remove from photos array
+          photos.splice(idx, 1);
+
+          photoCount.textContent = `${photos.length} KHOẢNH KHẮC`;
+          if (photos.length === 0) {
+            emptyState.style.display = "block";
+          }
+
+          showToast("Đã xóa ảnh rồi 🗑️");
+          deleteModal.classList.remove("open");
+          deleteModal.classList.remove("deleting");
+          pendingDeleteId = null;
+        }, 300);
+      } else {
+        // Fallback if card not found
+        photos.splice(idx, 1);
+        photoCount.textContent = `${photos.length} KHOẢNH KHẮC`;
+        if (photos.length === 0) {
+          emptyState.style.display = "block";
+        }
+        showToast("Đã xóa ảnh rồi 🗑️");
+        deleteModal.classList.remove("open");
+        deleteModal.classList.remove("deleting");
+        pendingDeleteId = null;
+      }
+    }
+  } catch (err) {
+    deleteError.textContent = err.message;
+    deleteError.style.display = "block";
+
+    // Shake modal on error
+    deleteModal.classList.add("error-shake");
+    setTimeout(() => deleteModal.classList.remove("error-shake"), 400);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Xóa đi 🗑️";
+    passwordInput.value = ""; // Clear password for security
+  }
+};
+
+// ── LIGHTBOX ───────────────────────────────────
+function openLightbox(index) {
+  lbIndex = index;
+  updateLightbox();
+  lightbox.classList.add("open");
+}
+
+function updateLightbox() {
+  const photo = photos[lbIndex];
+  lbImg.style.opacity = "0";
+  lbImg.src = getOptimizedUrl(photo.secure_url, 1400);
+  lbImg.onload = () => { lbImg.style.opacity = "1"; };
+  lbCaption.textContent = photo.context?.custom?.caption || "";
+  lbDate.textContent = new Date(photo.created_at).toLocaleDateString("vi-VN", { day:"2-digit", month:"2-digit", year:"numeric" });
+  lbPrev.style.display = lbIndex > 0 ? "flex" : "none";
+  lbNext.style.display = lbIndex < photos.length - 1 ? "flex" : "none";
+}
+
+lbClose.onclick = () => lightbox.classList.remove("open");
+lbPrev.onclick  = () => { if (lbIndex > 0) { lbIndex--; updateLightbox(); } };
+lbNext.onclick  = () => { if (lbIndex < photos.length - 1) { lbIndex++; updateLightbox(); } };
+
+// Keyboard
+document.addEventListener("keydown", (e) => {
+  if (!lightbox.classList.contains("open")) return;
+  if (e.key === "ArrowLeft")  lbPrev.click();
+  if (e.key === "ArrowRight") lbNext.click();
+  if (e.key === "Escape")     lightbox.classList.remove("open");
+});
+
+// Swipe lightbox trên mobile
+let touchStartX = 0;
+lightbox.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+lightbox.addEventListener("touchend",   (e) => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) { dx < 0 ? lbNext.click() : lbPrev.click(); }
+});
+
+// Close on backdrop
+uploadModal.addEventListener("click", (e) => { if (e.target === uploadModal) closeUploadModal(); });
+deleteModal.addEventListener("click", (e) => { if (e.target === deleteModal) deleteModal.classList.remove("open"); });
+lightbox.addEventListener("click",    (e) => { if (e.target === lightbox)    lightbox.classList.remove("open"); });
+
+// ── CATEGORY FILTER ───────────────────────────────────
+const filterBtn = document.getElementById("filterBtn");
+const filterDropdown = document.getElementById("filterDropdown");
+const filterCatChips = document.getElementById("filterCatChips");
+const selectAllBtn = document.getElementById("selectAllBtn");
+const clearAllBtn = document.getElementById("clearAllBtn");
+const applyFilterBtn = document.getElementById("applyFilterBtn");
+const cancelFilterBtn = document.getElementById("cancelFilterBtn");
+
+let selectedCategories = new Set();
+
+// Populate filter categories from the existing category chips
+function populateFilterCategories() {
+  filterCatChips.innerHTML = "";
+  document.querySelectorAll("#catChips .cat-chip").forEach(chip => {
+    const clone = chip.cloneNode(true);
+    clone.addEventListener("click", () => {
+      const value = clone.dataset.val;
+      if (selectedCategories.has(value)) {
+        selectedCategories.delete(value);
+        clone.classList.remove("active");
+      } else {
+        selectedCategories.add(value);
+        clone.classList.add("active");
+      }
+      updateFilterButtonText();
+    });
+    filterCatChips.appendChild(clone);
+  });
+}
+
+// Update filter button text to show selected count
+function updateFilterButtonText() {
+  const count = selectedCategories.size;
+  if (count === 0) {
+    filterBtn.textContent = "🔍 Lọc theo danh mục";
+  } else {
+    filterBtn.textContent = `🔍 Lọc (${count})`;
+  }
+}
+
+// Filter photos based on selected categories and search text
+function filterPhotos() {
+  return photos.filter(photo => {
+    // Check search text match
+    const textMatch = (photo.context?.caption ?? "").toLowerCase().includes(filterText.toLowerCase());
+
+    // Check category match
+    const categoryMatch = selectedCategories.size === 0 ||
+                         (photo.context && photo.context.category &&
+                          selectedCategories.has(photo.context.category));
+
+    return textMatch && categoryMatch;
+  });
+}
+
+// Smart sorting: most matching categories first, then fewest total categories, then maintain order
+function sortFilteredPhotos(photos) {
+  return photos.slice().sort((a, b) => {
+    const aMatches = selectedCategories.size > 0 && a.context && a.context.category ?
+                     (selectedCategories.has(a.context.category) ? 1 : 0) : 0;
+    const bMatches = selectedCategories.size > 0 && b.context && b.context.category ?
+                     (selectedCategories.has(b.context.category) ? 1 : 0) : 0;
+
+    // First sort by number of matches (descending)
+    if (bMatches !== aMatches) return bMatches - aMatches;
+
+    // Then sort by total categories (ascending) - assuming single category per photo for now
+    // In a more complex system with multiple categories per photo, we would count total categories
+    const aTotalCats = a.context && a.context.category ? 1 : 0;
+    const bTotalCats = b.context && b.context.category ? 1 : 0;
+    if (aTotalCats !== bTotalCats) return aTotalCats - bTotalCats;
+
+    // Finally maintain original order (stable sort)
+    return photos.indexOf(a) - photos.indexOf(b);
+  });
+}
+
+// Update the renderGallery function to use filtering and sorting
+const originalRenderGallery = renderGallery;
+function renderGallery() {
+  const filtered = photos.filter(photo => {
+    // Search in caption
+    const caption = (photo.context?.caption ?? "").toLowerCase();
+    // Search in filename (extract from public_id or secure_url)
+    const filename = photo.public_id.split('/').pop().split('.').slice(0, -1).join('.').toLowerCase();
+    // Search in category
+    const category = (photo.context?.category ?? "").toLowerCase();
+    // Search in date (formatted as MM/DD/YYYY or similar)
+    const date = new Date(photo.created_at).toLocaleDateString("vi-VN").toLowerCase();
+
+    // Check if search text matches any of the fields
+    const searchMatch =
+      caption.includes(filterText.toLowerCase()) ||
+      filename.includes(filterText.toLowerCase()) ||
+      category.includes(filterText.toLowerCase()) ||
+      date.includes(filterText.toLowerCase());
+
+    // Filter by selected categories (if any)
+    const categoryMatch = selectedCategories.size === 0 ||
+                         (photo.context && photo.context.category &&
+                          selectedCategories.has(photo.context.category));
+
+    return searchMatch && categoryMatch;
+  });
+
+  // Apply smart sorting: most matching categories first, then fewest total categories, then maintain order
+  const sorted = filtered.slice().sort((a, b) => {
+    // Count how many selected categories each photo matches
+    const aMatches = selectedCategories.size > 0 && a.context && a.context.category ?
+                     (selectedCategories.has(a.context.category) ? 1 : 0) : 0;
+    const bMatches = selectedCategories.size > 0 && b.context && b.context.category ?
+                     (selectedCategories.has(b.context.category) ? 1 : 0) : 0;
+
+    // First sort by number of matches (descending)
+    if (bMatches !== aMatches) return bMatches - aMatches;
+
+    // Then sort by total categories (ascending) - assuming single category per photo for simplicity
+    const aTotalCats = a.context && a.context.category ? 1 : 0;
+    const bTotalCats = b.context && b.context.category ? 1 : 0;
+    if (aTotalCats !== bTotalCats) return aTotalCats - bTotalCats;
+
+    // Finally maintain original order (stable sort)
+    return photos.indexOf(a) - photos.indexOf(b);
+  });
+
+  gallery.innerHTML = "";
+  photoCount.textContent = `${sorted.length} KHOẢNH KHẮC`;
+  emptyState.style.display = sorted.length === 0 ? "block" : "none";
+
+  sorted.forEach((photo, index) => {
+    gallery.appendChild(createCard(photo, index));
+  });
+
+  // Update selection UI after rendering
+  updateSelectionUI();
+}
+
+// Replace the original renderGallery function
+window.renderGallery = renderGallery;
+
+filterBtn.addEventListener("click", () => {
+  filterDropdown.classList.toggle("open");
+  if (filterDropdown.classList.contains("open")) {
+    populateFilterCategories();
+  }
+});
+
+selectAllBtn.addEventListener("click", () => {
+  document.querySelectorAll("#filterCatChips .cat-chip").forEach(chip => {
+    const value = chip.dataset.val;
+    selectedCategories.add(value);
+    chip.classList.add("active");
+  });
+  updateFilterButtonText();
+});
+
+clearAllBtn.addEventListener("click", () => {
+  selectedCategories.clear();
+  document.querySelectorAll("#filterCatChips .cat-chip").forEach(chip => {
+    chip.classList.remove("active");
+  });
+  updateFilterButtonText();
+});
+
+applyFilterBtn.addEventListener("click", () => {
+  filterDropdown.classList.remove("open");
+  renderGallery();
+});
+
+cancelFilterBtn.addEventListener("click", () => {
+  filterDropdown.classList.remove("open");
+});
+
+// Close filter dropdown when clicking outside
+document.addEventListener("click", (e) => {
+  if (!filterBtn.contains(e.target) && !filterDropdown.contains(e.target)) {
+    filterDropdown.classList.remove("open");
+  }
+});
+
+// Prevent closing when clicking inside dropdown
+filterDropdown.addEventListener("click", (e) => {
+  e.stopPropagation();
+});
+
+// Update search input listener to use the new renderGallery
+const originalSearchInputListener = searchInput.oninput;
+searchInput.oninput = (e) => {
+  filterText = e.target.value;
+  renderGallery();
+};
+
+// Selection mode toggle
+  selectionModeBtn.addEventListener("click", () => {
+    document.body.classList.toggle('selection-mode-active');
+    isSelectionMode = document.body.classList.contains('selection-mode-active');
+    if (!isSelectionMode) {
+      // Clear selection when exiting selection mode
+      selectedPhotos.clear();
+      updateSelectionUI();
+    }
+    updateSelectionUI();
+  });
+
+// Batch toolbar event listeners
+btnDeleteSelected.addEventListener("click", () => {
+  if (selectedPhotos.size === 0) return;
+
+  // Show confirmation
+  if (confirm(`Bạn có chắc chắn muốn xóa ${selectedPhotos.size} ảnh đã chọn?`)) {
+    // Delete selected photos
+    const selectedIds = Array.from(selectedPhotos);
+    selectedIds.forEach(photoId => {
+      const photoIndex = photos.findIndex(p => p.public_id === photoId);
+      if (photoIndex !== -1) {
+        // Remove from gallery with animation
+        const cardEl = gallery.querySelector(`[data-public-id="${photoId}"]`);
+        if (cardEl) {
+          cardEl.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+          cardEl.style.opacity = "0";
+          cardEl.style.transform = "scale(0.95)";
+
+          setTimeout(() => {
+            if (cardEl.parentNode) {
+              cardEl.remove();
+            }
+            photos.splice(photoIndex, 1);
+          }, 300);
+        } else {
+          photos.splice(photoIndex, 1);
+        }
+      }
+    });
+
+    // Update UI
+    selectedPhotos.clear();
+    updateSelectionUI();
+    photoCount.textContent = `${photos.length} KHOẢNH KHẮC`;
+    if (photos.length === 0) {
+      emptyState.style.display = "block";
+    }
+    showToast(`Đã xóa ${selectedIds.length} ảnh`, false, true);
+
+    // Hide batch toolbar
+    toggleBatchToolbar();
+  }
+});
+btnDownloadSelected.addEventListener("click", () => {
+  if (selectedPhotos.size === 0) return;
+
+  showToast(`Chuẩn bị tải xuống ${selectedPhotos.size} ảnh...`, false);
+
+  // Create a temporary zip file using JSZip (if available) or download individually
+  // For simplicity, we'll download each image individually
+  // In a production app, you might want to use a library like JSZip to create a proper zip
+
+  const selectedPhotosArray = Array.from(selectedPhotos);
+  let downloadedCount = 0;
+
+  selectedPhotosArray.forEach((photoId, index) => {
+    const photo = photos.find(p => p.public_id === photoId);
+    if (photo) {
+      // Create a temporary link to download the image
+      const link = document.createElement("a");
+      link.href = photo.secure_url; // Use original quality for download
+      // Extract filename from public_id or use a default
+      const filename = photo.public_id.split('/').pop() + (photo.public_id.includes('.') ? '' : '.jpg');
+      link.download = filename || `photo_${Date.now()}_${index}.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      downloadedCount++;
+      if (downloadedCount === selectedPhotosArray.length) {
+        showToast(`Đã tải xuống ${downloadedCount} ảnh`, false, true);
+      }
+    }
+  });
+});
+
+
+btnEditSelected.addEventListener("click", () => {
+  // TODO: Implement multi-edit functionality
+  showToast("Chức năng sửa nhiều ảnh đang được phát triển", false);
+});
+
+
+// Function to update selection UI
+// Function to show/hide batch toolbar
+function toggleBatchToolbar() {
+  if (batchToolbar) {
+    if (isSelectionMode && selectedPhotos.size > 0) {
+      batchToolbar.classList.add('visible');
+    } else {
+      batchToolbar.classList.remove('visible');
+    }
+  }
+}
+
+// Update the createCard function to handle selection mode visuals
+// We'll modify the existing createCard function rather than replacing it entirely
+
+// ── TOAST ──────────────────────────────────────
+function showToast(msg, error = false, success = false) {
+  toast.textContent = msg;
+  toast.className = "toast show" + (error ? " error" : success ? " success" : "");
+  setTimeout(() => { toast.className = "toast"; }, 3200);
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    flatpickr(".date-picker", {
+      dateFormat: "Y-m-d",
+      locale: "vi"
+    });
+  });
+</script>
+</body>
+</html>
