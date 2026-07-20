@@ -1,8 +1,0 @@
-{
-  "name": "canh-cut-ga-nho",
-  "version": "1.0.0",
-  "description": "Album ảnh hai đứa 🐧🐥",
-  "dependencies": {
-    "cloudinary": "^1.41.3"
-  }
-}
